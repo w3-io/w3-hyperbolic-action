@@ -195,6 +195,27 @@ RTX 3090 ($0.30/hr).
   run: echo "${{ fromJSON(steps.gpu.outputs.result).sshCommand }}"
 ```
 
+## Beyond the API: GPU compute platform
+
+This action covers inference (text, image, audio, vision) and basic
+GPU rental. Hyperbolic's full platform extends further:
+
+| Capability | Via this action | Via Hyperbolic platform |
+|------------|-----------------|------------------------|
+| Text generation | `chat` command | Same API |
+| Image/audio/vision | `generate-image`, `generate-audio`, `analyze-image` | Same API |
+| On-demand GPUs | `rent-gpu` (provision + SSH) | Full lifecycle management, VS Code extension |
+| Reserved clusters | Not yet | Dedicated multi-node with InfiniBand, guaranteed availability |
+| Model fine-tuning | Not yet (use `rent-gpu` + SSH) | Coming: managed fine-tuning API |
+| LoRA training | Partial (inference with LoRA adapters) | Full training pipeline |
+| Dedicated endpoints | Not yet | Single-tenant private inference |
+
+A workflow might use the `chat` command for quick inference, then
+`rent-gpu` to provision hardware for a longer training job — all
+through the same API key and platform.
+
+For the full platform, see [Hyperbolic docs](https://docs.hyperbolic.ai).
+
 ## Authentication
 
 Get an API key from [Hyperbolic](https://app.hyperbolic.ai). Store it
