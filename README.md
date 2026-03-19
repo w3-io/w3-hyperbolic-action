@@ -4,6 +4,22 @@ AI inference and on-demand GPU compute via [Hyperbolic](https://hyperbolic.xyz)
 for GitHub Actions. Supports text generation, image generation, audio synthesis,
 vision analysis, and GPU rental.
 
+## About Hyperbolic
+
+[Hyperbolic](https://hyperbolic.xyz) is an on-demand AI cloud
+combining an inference API with a GPU rental marketplace. It offers
+an OpenAI-compatible API with 13+ open-source models (DeepSeek,
+Llama, Qwen) at 3-10x lower cost than inference competitors, and
+H100 GPUs at $1.49/hr (vs $3-4/hr elsewhere).
+
+The platform supports text, image, audio, and vision in a single
+API. Over 200,000 engineers and researchers use Hyperbolic, with
+endorsements from Andrej Karpathy and the Hugging Face CEO.
+
+**Why use it:** Cost-effective AI in workflows. Structured data
+extraction, image generation, document analysis, and GPU compute
+for training jobs.
+
 ## Quick start
 
 ```yaml
