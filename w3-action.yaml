@@ -1,44 +1,154 @@
-# TODO: This file describes your action for the W3 MCP server.
-# AI agents use this to discover your action, understand its commands,
-# and generate correct workflow YAML. Keep it in sync with action.yml.
-#
-# On release, this file is synced to the MCP's registry.yaml.
-
-kind: integration              # integration | primitive | utility
-partner: yourpartner           # TODO: machine-readable partner ID
-name: YourPartner Integration  # TODO: human-readable name
+kind: integration
+partner: hyperbolic
+name: Hyperbolic AI Inference
 version: 1.0.0
-repo: w3-io/w3-yourpartner-action  # TODO: your repo
-
+repo: w3-io/w3-hyperbolic-action
 commands:
-  # TODO: Define each command your action supports. Example:
-  #
-  # - name: inspect
-  #   description: >
-  #     Risk assessment for a blockchain address. Returns per-chain
-  #     scores for fraud, compliance, and cyber risk.
-  #   inputs:
-  #     address:
-  #       type: string
-  #       required: true
-  #       description: Blockchain address to inspect
-  #     chain-id:
-  #       type: string
-  #       required: false
-  #       description: Filter to a specific chain
-  #   outputs:
-  #     result:
-  #       type: object
-  #       description: Full risk score breakdown
-
-  - name: example-command
-    description: TODO - describe what this command does
+  - name: chat
+    description: >
+      Text generation via OpenAI-compatible chat completions. Supports
+      structured JSON output, function calling, and 13+ open-source models.
     inputs:
-      input:
+      model:
         type: string
         required: true
-        description: TODO - describe this input
+        description: Model ID (e.g. "deepseek-ai/DeepSeek-V3")
+      messages:
+        type: string
+        required: true
+        description: Chat messages as JSON array
+      temperature:
+        type: number
+        required: false
+        description: Sampling temperature (0.0-2.0)
+      max-tokens:
+        type: number
+        required: false
+        description: Maximum tokens to generate
+      response-format:
+        type: string
+        required: false
+        description: JSON schema for structured output
+      tools:
+        type: string
+        required: false
+        description: Tool definitions as JSON array for function calling
     outputs:
       result:
         type: object
-        description: TODO - describe the output shape
+        description: "{content, modelUsed, inputTokens, outputTokens, totalTokens, finishReason, toolCalls}"
+
+  - name: generate-image
+    description: >
+      Image generation from text prompts. Supports SDXL, Flux.1, Stable
+      Diffusion models with LoRA style adapters.
+    inputs:
+      prompt:
+        type: string
+        required: true
+        description: Image description
+      model:
+        type: string
+        required: false
+        description: Model name (default SDXL1.0-base)
+      height:
+        type: number
+        required: false
+        description: Image height in pixels (default 1024)
+      width:
+        type: number
+        required: false
+        description: Image width in pixels (default 1024)
+      lora:
+        type: string
+        required: false
+        description: LoRA adapter name (e.g. "Pixel_Art", "Logo")
+    outputs:
+      result:
+        type: object
+        description: "{imageBase64, model, seed}"
+
+  - name: generate-audio
+    description: >
+      Text-to-speech via Melo TTS. Supports English, Spanish, French,
+      Chinese, Japanese, Korean with accent variants.
+    inputs:
+      text:
+        type: string
+        required: true
+        description: Text to convert to speech
+      language:
+        type: string
+        required: false
+        description: "Language code: EN, ES, FR, ZH, JP, KR"
+      speaker:
+        type: string
+        required: false
+        description: "Speaker accent (e.g. EN-US, EN-BR, EN-AU)"
+    outputs:
+      result:
+        type: object
+        description: "{audioBase64}"
+
+  - name: analyze-image
+    description: >
+      Image analysis via vision-language models. Send an image URL or
+      base64 with a question.
+    inputs:
+      model:
+        type: string
+        required: true
+        description: VLM model ID (e.g. "Qwen/Qwen2.5-VL-72B-Instruct")
+      prompt:
+        type: string
+        required: true
+        description: Question about the image
+      image-url:
+        type: string
+        required: false
+        description: URL of image to analyze
+      image-base64:
+        type: string
+        required: false
+        description: Base64-encoded image
+    outputs:
+      result:
+        type: object
+        description: "{content, modelUsed, inputTokens, outputTokens}"
+
+  - name: rent-gpu
+    description: >
+      Rent on-demand GPU instances (H100, A100, RTX 4090/3090).
+    inputs:
+      gpu-type:
+        type: string
+        required: true
+        description: "GPU type (e.g. H100-SXM, A100-SXM, RTX-4090)"
+      gpu-count:
+        type: number
+        required: false
+        description: Number of GPUs (1, 2, 4, or 8)
+    outputs:
+      result:
+        type: object
+        description: "{instanceId, sshCommand, status}"
+
+  - name: list-gpus
+    description: List available GPU types and pricing.
+    inputs: {}
+    outputs:
+      result:
+        type: array
+        description: Available GPU configurations
+
+  - name: terminate-gpu
+    description: Terminate a running GPU instance.
+    inputs:
+      instance-id:
+        type: string
+        required: true
+        description: Instance ID to terminate
+    outputs:
+      result:
+        type: object
+        description: "{status}"
