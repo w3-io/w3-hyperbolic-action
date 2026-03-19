@@ -1,30 +1,14 @@
-/**
- * Command router and output formatter.
- *
- * This file wires your client to the GitHub Actions runtime. It:
- *   1. Reads the `command` input to determine which operation to run
- *   2. Creates your client with the provided credentials
- *   3. Calls the appropriate handler function
- *   4. Sets the `result` output as a JSON string
- *   5. Writes a job summary for visibility in the Actions UI
- *   6. Reports errors cleanly via core.setFailed()
- *
- * To add a new command:
- *   1. Write a handler function (async, takes client, returns result)
- *   2. Add it to the COMMANDS map
- *   3. Add summary rendering in writeSummary() if appropriate
- */
-
 import * as core from '@actions/core'
-// TODO: Update this import to match your renamed client
-import { Client, ClientError } from './client.js'
+import { HyperbolicClient, HyperbolicError } from './hyperbolic.js'
 
-// TODO: Replace with your commands. Each key is a command name that users
-// pass via the `command` input. Each value is an async function that takes
-// the client and returns a result object.
 const COMMANDS = {
-  'example-command': runExampleCommand,
-  // 'another-command': runAnotherCommand,
+  chat: runChat,
+  'generate-image': runGenerateImage,
+  'generate-audio': runGenerateAudio,
+  'analyze-image': runAnalyzeImage,
+  'list-gpus': runListGpus,
+  'rent-gpu': runRentGpu,
+  'terminate-gpu': runTerminateGpu,
 }
 
 export async function run() {
@@ -37,9 +21,7 @@ export async function run() {
       return
     }
 
-    // TODO: Update constructor args to match your client.
-    // Remove apiKey if your API doesn't need auth.
-    const client = new Client({
+    const client = new HyperbolicClient({
       apiKey: core.getInput('api-key', { required: true }),
       baseUrl: core.getInput('api-url') || undefined,
     })
@@ -49,9 +31,8 @@ export async function run() {
 
     writeSummary(command, result)
   } catch (error) {
-    // TODO: Update error class name to match yours
-    if (error instanceof ClientError) {
-      core.setFailed(`${error.name} (${error.code}): ${error.message}`)
+    if (error instanceof HyperbolicError) {
+      core.setFailed(`Hyperbolic error (${error.code}): ${error.message}`)
     } else {
       core.setFailed(error.message)
     }
@@ -59,26 +40,125 @@ export async function run() {
 }
 
 // -- Command handlers -------------------------------------------------------
-// Each handler reads its own inputs, calls the client, returns a result.
-// Keep these thin — business logic belongs in the client.
 
-async function runExampleCommand(client) {
-  // TODO: Read your command-specific inputs here
-  const input = core.getInput('input', { required: true })
+function parseJson(input, name) {
+  if (!input) return undefined
+  try {
+    return JSON.parse(input)
+  } catch {
+    throw new HyperbolicError(`Invalid JSON for ${name}`, { code: 'INVALID_JSON' })
+  }
+}
 
-  return client.exampleCommand(input)
+async function runChat(client) {
+  const messages = parseJson(core.getInput('messages', { required: true }), 'messages')
+  const stop = core.getInput('stop')
+
+  return client.chat({
+    model: core.getInput('model', { required: true }),
+    messages,
+    temperature: core.getInput('temperature') ? Number(core.getInput('temperature')) : undefined,
+    topP: core.getInput('top-p') ? Number(core.getInput('top-p')) : undefined,
+    maxTokens: core.getInput('max-tokens') ? Number(core.getInput('max-tokens')) : undefined,
+    responseFormat: parseJson(core.getInput('response-format'), 'response-format'),
+    seed: core.getInput('seed') ? Number(core.getInput('seed')) : undefined,
+    stop: stop ? stop.split(',').map((s) => s.trim()) : undefined,
+    tools: parseJson(core.getInput('tools'), 'tools'),
+  })
+}
+
+async function runGenerateImage(client) {
+  return client.generateImage({
+    model: core.getInput('model') || undefined,
+    prompt: core.getInput('prompt', { required: true }),
+    height: core.getInput('height') ? Number(core.getInput('height')) : undefined,
+    width: core.getInput('width') ? Number(core.getInput('width')) : undefined,
+    steps: core.getInput('steps') ? Number(core.getInput('steps')) : undefined,
+    lora: core.getInput('lora') || undefined,
+    loraWeight: core.getInput('lora-weight') ? Number(core.getInput('lora-weight')) : undefined,
+  })
+}
+
+async function runGenerateAudio(client) {
+  return client.generateAudio({
+    text: core.getInput('text', { required: true }),
+    language: core.getInput('language') || undefined,
+    speaker: core.getInput('speaker') || undefined,
+    speed: core.getInput('speed') ? Number(core.getInput('speed')) : undefined,
+  })
+}
+
+async function runAnalyzeImage(client) {
+  return client.analyzeImage({
+    model: core.getInput('model', { required: true }),
+    prompt: core.getInput('prompt', { required: true }),
+    imageUrl: core.getInput('image-url') || undefined,
+    imageBase64: core.getInput('image-base64') || undefined,
+  })
+}
+
+async function runListGpus(client) {
+  return client.listGpus()
+}
+
+async function runRentGpu(client) {
+  return client.rentGpu({
+    gpuType: core.getInput('gpu-type', { required: true }),
+    gpuCount: core.getInput('gpu-count') ? Number(core.getInput('gpu-count')) : undefined,
+  })
+}
+
+async function runTerminateGpu(client) {
+  return client.terminateGpu(core.getInput('instance-id', { required: true }))
 }
 
 // -- Job summary ------------------------------------------------------------
-// Optional but recommended. Renders a visible summary in the Actions UI.
-// See https://github.blog/news-insights/product-news/supercharging-github-actions-with-job-summaries/
 
 function writeSummary(command, result) {
-  // TODO: Customize the summary for your action. A table of key results
-  // works well. Delete this function if your action doesn't need a summary.
+  const heading = `Hyperbolic: ${command}`
+
+  if (command === 'chat') {
+    const preview = result.content?.slice(0, 200) || ''
+    core.summary
+      .addHeading(heading, 3)
+      .addRaw(`**Model:** \`${result.modelUsed}\`\n\n`)
+      .addRaw(
+        `**Tokens:** ${result.inputTokens} in / ${result.outputTokens} out (${result.totalTokens} total)\n\n`,
+      )
+      .addRaw(`**Response:** ${preview}${result.content?.length > 200 ? '...' : ''}\n`)
+      .write()
+    return
+  }
+
+  if (command === 'generate-image') {
+    core.summary
+      .addHeading(heading, 3)
+      .addRaw(`**Model:** \`${result.model}\`\n\n`)
+      .addRaw(`Image generated (${result.imageBase64 ? 'base64 in result' : 'no data'})\n`)
+      .write()
+    return
+  }
+
+  if (command === 'generate-audio') {
+    core.summary
+      .addHeading(heading, 3)
+      .addRaw(`Audio generated (${result.audioBase64 ? 'base64 in result' : 'no data'})\n`)
+      .write()
+    return
+  }
+
+  if (command === 'rent-gpu') {
+    core.summary
+      .addHeading(heading, 3)
+      .addRaw(`**Instance:** \`${result.instanceId}\`\n\n`)
+      .addRaw(`**Status:** ${result.status}\n`)
+      .write()
+    return
+  }
+
+  // Default summary
   core.summary
-    .addHeading('Action Result', 3)
-    .addRaw(`**Command:** \`${command}\`\n\n`)
+    .addHeading(heading, 3)
     .addCodeBlock(JSON.stringify(result, null, 2), 'json')
     .write()
 }

@@ -1,24 +1,9 @@
-/**
- * Main integration tests.
- *
- * These test the full action — command routing, input reading, output
- * formatting, and error reporting — with @actions/core mocked.
- *
- * Pattern:
- *   - Mock both fetch and @actions/core
- *   - Use setInputs() to simulate workflow inputs
- *   - Call run() and check getOutputs() / getErrors()
- *   - Test each command, unknown commands, and missing inputs
- *
- * TODO: Update for your commands and inputs.
- */
-
 import { jest } from '@jest/globals'
 import { readFileSync } from 'fs'
 
-const fixtureResponse = JSON.parse(
-  readFileSync(new URL('../__fixtures__/api-response.json', import.meta.url)),
-)
+const chatFixture = JSON.parse(readFileSync(new URL('../__fixtures__/chat-response.json', import.meta.url)))
+const imageFixture = JSON.parse(readFileSync(new URL('../__fixtures__/image-response.json', import.meta.url)))
+const audioFixture = JSON.parse(readFileSync(new URL('../__fixtures__/audio-response.json', import.meta.url)))
 
 const mockFetch = jest.fn()
 global.fetch = mockFetch
@@ -42,64 +27,138 @@ describe('run', () => {
     mockFetch.mockReset()
   })
 
-  // TODO: Replace with a test for your first command
-  test('example-command returns result', async () => {
+  test('chat command returns formatted result', async () => {
     mockCore.setInputs({
-      command: 'example-command',
+      command: 'chat',
       'api-key': 'test-key',
-      input: 'test-value',
+      model: 'deepseek-ai/DeepSeek-V3',
+      messages: '[{"role":"user","content":"Hello"}]',
     })
-    mockOk(fixtureResponse)
+    mockOk(chatFixture)
 
     await run()
 
-    const outputs = mockCore.getOutputs()
-    expect(outputs.result).toBeDefined()
+    const result = JSON.parse(mockCore.getOutputs().result)
+    expect(result.content).toBe('The capital of France is Paris.')
+    expect(result.totalTokens).toBe(20)
     expect(mockCore.getErrors()).toHaveLength(0)
   })
 
-  test('unknown command fails with available commands listed', async () => {
+  test('chat with structured output', async () => {
     mockCore.setInputs({
-      command: 'nonexistent',
+      command: 'chat',
       'api-key': 'test-key',
+      model: 'test',
+      messages: '[{"role":"user","content":"extract"}]',
+      'response-format': '{"type":"json_schema","json_schema":{"name":"test","strict":true}}',
     })
+    mockOk(chatFixture)
 
     await run()
 
-    const errors = mockCore.getErrors()
-    expect(errors).toHaveLength(1)
-    expect(errors[0]).toContain('Unknown command')
-    expect(errors[0]).toContain('nonexistent')
+    expect(mockCore.getErrors()).toHaveLength(0)
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(body.response_format.type).toBe('json_schema')
   })
 
-  test('missing api-key fails', async () => {
+  test('generate-image returns image data', async () => {
     mockCore.setInputs({
-      command: 'example-command',
-      input: 'test',
+      command: 'generate-image',
+      'api-key': 'test-key',
+      prompt: 'a cat wearing sunglasses',
     })
+    mockOk(imageFixture)
 
     await run()
 
-    const errors = mockCore.getErrors()
-    expect(errors).toHaveLength(1)
+    const result = JSON.parse(mockCore.getOutputs().result)
+    expect(result.imageBase64).toBeTruthy()
+    expect(mockCore.getErrors()).toHaveLength(0)
   })
 
-  test('API error is reported as failure', async () => {
+  test('generate-audio returns audio data', async () => {
     mockCore.setInputs({
-      command: 'example-command',
+      command: 'generate-audio',
       'api-key': 'test-key',
-      input: 'test',
+      text: 'Hello world',
     })
-    mockFetch.mockResolvedValueOnce({
-      ok: false,
-      status: 500,
-      text: async () => 'Internal Server Error',
+    mockOk(audioFixture)
+
+    await run()
+
+    const result = JSON.parse(mockCore.getOutputs().result)
+    expect(result.audioBase64).toBeTruthy()
+    expect(mockCore.getErrors()).toHaveLength(0)
+  })
+
+  test('analyze-image sends vision request', async () => {
+    mockCore.setInputs({
+      command: 'analyze-image',
+      'api-key': 'test-key',
+      model: 'Qwen/Qwen2-VL-7B-Instruct',
+      prompt: 'What is this?',
+      'image-url': 'https://example.com/photo.jpg',
+    })
+    mockOk(chatFixture)
+
+    await run()
+
+    expect(mockCore.getErrors()).toHaveLength(0)
+    const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+    expect(body.messages[0].content[1].image_url.url).toBe('https://example.com/photo.jpg')
+  })
+
+  test('rent-gpu returns instance info', async () => {
+    mockCore.setInputs({
+      command: 'rent-gpu',
+      'api-key': 'test-key',
+      'gpu-type': 'H100-SXM',
+      'gpu-count': '2',
+    })
+    mockOk({ instance_id: 'i-abc', status: 'provisioning', ssh_command: 'ssh root@1.2.3.4' })
+
+    await run()
+
+    const result = JSON.parse(mockCore.getOutputs().result)
+    expect(result.instanceId).toBe('i-abc')
+    expect(mockCore.getErrors()).toHaveLength(0)
+  })
+
+  test('terminate-gpu sends delete', async () => {
+    mockCore.setInputs({
+      command: 'terminate-gpu',
+      'api-key': 'test-key',
+      'instance-id': 'i-abc',
+    })
+    mockOk({ status: 'terminated' })
+
+    await run()
+
+    const result = JSON.parse(mockCore.getOutputs().result)
+    expect(result.status).toBe('terminated')
+    expect(mockCore.getErrors()).toHaveLength(0)
+  })
+
+  test('unknown command fails', async () => {
+    mockCore.setInputs({ command: 'bogus', 'api-key': 'test-key' })
+
+    await run()
+
+    expect(mockCore.getErrors()).toHaveLength(1)
+    expect(mockCore.getErrors()[0]).toContain('Unknown command')
+  })
+
+  test('invalid JSON in messages fails', async () => {
+    mockCore.setInputs({
+      command: 'chat',
+      'api-key': 'test-key',
+      model: 'test',
+      messages: 'not json',
     })
 
     await run()
 
-    const errors = mockCore.getErrors()
-    expect(errors).toHaveLength(1)
-    expect(errors[0]).toContain('API_ERROR')
+    expect(mockCore.getErrors()).toHaveLength(1)
+    expect(mockCore.getErrors()[0]).toContain('Invalid JSON')
   })
 })

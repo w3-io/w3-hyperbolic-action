@@ -1,43 +1,105 @@
-# TODO: Replace this entire file with your action's definition.
-#
-# This file is the contract between your action and the workflow runner.
-# It defines what inputs your action accepts and what outputs it produces.
-# Keep inputs minimal and well-named. See the README for naming conventions.
-#
-# Reference: https://docs.github.com/en/actions/creating-actions/metadata-syntax-for-github-actions
-
-name: 'W3 YourPartner Action'          # TODO: e.g. "W3 Cube3 Action"
-description: 'Short description'        # TODO: what does your action do?
+name: 'W3 Hyperbolic Action'
+description: 'AI inference and GPU compute via Hyperbolic — text, image, audio, vision, and on-demand GPUs'
 author: 'w3-io'
 
 inputs:
   command:
-    description: 'Operation to perform'  # TODO: list your commands here
+    description: 'Operation: chat, generate-image, generate-audio, analyze-image, rent-gpu, list-gpus, terminate-gpu'
     required: true
   api-key:
-    description: 'API key for authentication'
-    required: true                       # TODO: set to false if your API needs no auth
+    description: 'Hyperbolic API key'
+    required: true
   api-url:
-    description: 'API base URL override (for testing or staging)'
+    description: 'API base URL override'
     required: false
-    default: 'https://api.yourpartner.com'  # TODO: your partner's production API URL
+    default: 'https://api.hyperbolic.xyz'
 
-  # TODO: Add your command-specific inputs below. Use plain names without
-  # partner prefix. For example:
-  #
-  # address:
-  #   description: 'Blockchain address to inspect'
-  #   required: false
-  #
-  # symbols:
-  #   description: 'Comma-separated token symbols (e.g. "BTC,ETH")'
-  #   required: false
+  # Text generation (chat)
+  model:
+    description: 'Model ID (e.g. "deepseek-ai/DeepSeek-V3", "meta-llama/Llama-3.3-70B-Instruct")'
+    required: false
+  messages:
+    description: 'Chat messages as JSON array (e.g. [{"role":"user","content":"Hello"}])'
+    required: false
+  temperature:
+    description: 'Sampling temperature (0.0-2.0)'
+    required: false
+  top-p:
+    description: 'Nucleus sampling threshold (0.0-1.0)'
+    required: false
+  max-tokens:
+    description: 'Maximum tokens to generate'
+    required: false
+  response-format:
+    description: 'Response format as JSON (e.g. {"type":"json_schema","json_schema":{...}})'
+    required: false
+  seed:
+    description: 'Random seed for reproducibility'
+    required: false
+  stop:
+    description: 'Comma-separated stop sequences'
+    required: false
+  tools:
+    description: 'Tool definitions as JSON array for function calling'
+    required: false
+
+  # Image generation
+  prompt:
+    description: 'Text prompt for image generation or question for vision analysis'
+    required: false
+  height:
+    description: 'Image height in pixels (default: 1024)'
+    required: false
+  width:
+    description: 'Image width in pixels (default: 1024)'
+    required: false
+  steps:
+    description: 'Number of diffusion steps (default: 25)'
+    required: false
+  lora:
+    description: 'LoRA style adapter name (e.g. "Pixel_Art", "Logo", "Sci-fi")'
+    required: false
+  lora-weight:
+    description: 'LoRA influence weight (0.0-1.0, default: 0.8)'
+    required: false
+
+  # Audio generation
+  text:
+    description: 'Text to convert to speech'
+    required: false
+  language:
+    description: 'TTS language: EN, ES, FR, ZH, JP, KR (default: EN)'
+    required: false
+  speaker:
+    description: 'TTS speaker/accent (e.g. "EN-US", "EN-BR", "EN-AU")'
+    required: false
+  speed:
+    description: 'TTS speed multiplier (0.1-5.0, default: 1.0)'
+    required: false
+
+  # Vision
+  image-url:
+    description: 'URL of image to analyze'
+    required: false
+  image-base64:
+    description: 'Base64-encoded image to analyze'
+    required: false
+
+  # GPU compute
+  gpu-type:
+    description: 'GPU type for rental (e.g. "H100-SXM", "A100-SXM", "RTX-4090")'
+    required: false
+  gpu-count:
+    description: 'Number of GPUs (1, 2, 4, or 8)'
+    required: false
+    default: '1'
+  instance-id:
+    description: 'Instance ID for terminate-gpu'
+    required: false
 
 outputs:
   result:
     description: 'JSON result of the operation'
-    # This is the only output. Always a JSON string.
-    # Document the schema in your w3-action.yaml and docs/guide.md.
 
 runs:
   using: 'node20'
