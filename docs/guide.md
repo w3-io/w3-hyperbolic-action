@@ -195,7 +195,7 @@ RTX 3090 ($0.30/hr).
   run: echo "${{ fromJSON(steps.gpu.outputs.result).sshCommand }}"
 ```
 
-## Beyond the API: GPU compute platform
+## Beyond this W3 integration
 
 This action covers inference (text, image, audio, vision) and basic
 GPU rental. Hyperbolic's full platform extends further:
