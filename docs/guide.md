@@ -7,6 +7,8 @@ complexity: intermediate
 
 # Hyperbolic AI Inference
 
+[Hyperbolic](https://hyperbolic.ai) is an on-demand AI cloud serving 13+ open-source models at 3-10x lower cost than competitors. OpenAI-compatible API — existing code migrates by changing the base URL. Supports text generation (DeepSeek, Llama, Qwen), image generation (Flux, SDXL), audio synthesis (TTS), vision analysis, and GPU rental (H100 at $1.49/hr). Used by 200,000+ engineers. Use this action for structured data extraction, content generation, document analysis, image processing, or provisioning GPU compute for training jobs.
+
 AI inference (text, image, audio, vision) and on-demand GPU compute
 via Hyperbolic. OpenAI-compatible chat API — existing OpenAI workflows
 migrate by changing the base URL and API key.
