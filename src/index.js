@@ -1,6 +1,6 @@
-import { createCommandRouter, setJsonOutput, handleError } from '@w3-io/action-core'
+import { createCommandRouter, setJsonOutput, handleError, W3ActionError } from '@w3-io/action-core'
 import * as core from '@actions/core'
-import { HyperbolicClient, HyperbolicError } from './hyperbolic.js'
+import { HyperbolicClient } from './hyperbolic.js'
 
 // -- Helpers ------------------------------------------------------------------
 
@@ -9,7 +9,7 @@ function parseJson(input, name) {
   try {
     return JSON.parse(input)
   } catch {
-    throw new HyperbolicError(`Invalid JSON for ${name}`, { code: 'INVALID_JSON' })
+    throw new W3ActionError('INVALID_JSON', `Invalid JSON for ${name}`)
   }
 }
 
@@ -89,7 +89,9 @@ const router = createCommandRouter({
       return client.chat({
         model: core.getInput('model', { required: true }),
         messages,
-        temperature: core.getInput('temperature') ? Number(core.getInput('temperature')) : undefined,
+        temperature: core.getInput('temperature')
+          ? Number(core.getInput('temperature'))
+          : undefined,
         topP: core.getInput('top-p') ? Number(core.getInput('top-p')) : undefined,
         maxTokens: core.getInput('max-tokens') ? Number(core.getInput('max-tokens')) : undefined,
         responseFormat: parseJson(core.getInput('response-format'), 'response-format'),

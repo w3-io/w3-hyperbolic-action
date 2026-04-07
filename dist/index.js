@@ -25555,14 +25555,6 @@ module.exports = {
 
 /***/ }),
 
-/***/ 9901:
-/***/ ((module) => {
-
-module.exports = eval("require")("@w3-io/action-core");
-
-
-/***/ }),
-
 /***/ 2613:
 /***/ ((module) => {
 
@@ -25665,6 +25657,13 @@ module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:crypto"
 /***/ ((module) => {
 
 module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:events");
+
+/***/ }),
+
+/***/ 7067:
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_createRequire(import.meta.url)("node:http");
 
 /***/ }),
 
@@ -27426,6 +27425,64 @@ module.exports = parseParams
 /******/ }
 /******/ 
 /************************************************************************/
+/******/ /* webpack/runtime/create fake namespace object */
+/******/ (() => {
+/******/ 	var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 	var leafPrototypes;
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 16: return value when it's Promise-like
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__nccwpck_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = this(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if(typeof value === 'object' && value) {
+/******/ 			if((mode & 4) && value.__esModule) return value;
+/******/ 			if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 		}
+/******/ 		var ns = Object.create(null);
+/******/ 		__nccwpck_require__.r(ns);
+/******/ 		var def = {};
+/******/ 		leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 		for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 			Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
+/******/ 		}
+/******/ 		def['default'] = () => (value);
+/******/ 		__nccwpck_require__.d(ns, def);
+/******/ 		return ns;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__nccwpck_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__nccwpck_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
 /******/ /* webpack/runtime/compat */
 /******/ 
 /******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
@@ -27433,10 +27490,431 @@ module.exports = parseParams
 /************************************************************************/
 var __webpack_exports__ = {};
 
-// EXTERNAL MODULE: ./node_modules/@vercel/ncc/dist/ncc/@@notfound.js?@w3-io/action-core
-var action_core = __nccwpck_require__(9901);
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
-var core = __nccwpck_require__(7484);
+var lib_core = __nccwpck_require__(7484);
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/input.js
+
+/**
+ * Read an input and parse it as JSON. Returns the parsed value.
+ * Throws if the input is missing (when required) or not valid JSON.
+ */
+function parseJsonInput(name, options) {
+    const raw = core.getInput(name, options);
+    if (!raw)
+        return undefined;
+    return JSON.parse(raw);
+}
+/**
+ * Read a required input. Throws if missing.
+ */
+function requireInput(name) {
+    return core.getInput(name, { required: true });
+}
+/**
+ * Read an optional input. Returns undefined if empty.
+ */
+function getOptionalInput(name) {
+    return core.getInput(name) || undefined;
+}
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/output.js
+
+/**
+ * Set a JSON output. Serializes exactly once — prevents double-encoding.
+ *
+ * If the value is already a string, it's set directly.
+ * If it's an object/array/number/boolean, it's JSON.stringified once.
+ */
+function setJsonOutput(name, value) {
+    const serialized = typeof value === "string" ? value : JSON.stringify(value);
+    lib_core.setOutput(name, serialized);
+}
+/**
+ * Set multiple outputs at once.
+ */
+function setOutputs(outputs) {
+    for (const [key, value] of Object.entries(outputs)) {
+        if (value != null) {
+            setJsonOutput(key, value);
+        }
+    }
+}
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/error.js
+
+/**
+ * Structured error with code, message, and optional details.
+ */
+class W3ActionError extends Error {
+    code;
+    statusCode;
+    details;
+    constructor(code, message, options) {
+        super(message);
+        this.name = "W3ActionError";
+        this.code = code;
+        this.statusCode = options?.statusCode;
+        this.details = options?.details;
+    }
+}
+/**
+ * Top-level error handler for action entry points.
+ *
+ * Usage:
+ *   main().catch(handleError);
+ */
+function handleError(error) {
+    if (error instanceof W3ActionError) {
+        lib_core.setOutput("error-code", error.code);
+        if (error.statusCode)
+            lib_core.setOutput("status-code", error.statusCode);
+        lib_core.setFailed(`[${error.code}] ${error.message}`);
+    }
+    else if (error instanceof Error) {
+        lib_core.setFailed(error.message);
+    }
+    else {
+        lib_core.setFailed(String(error));
+    }
+}
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/http.js
+
+/**
+ * Make an HTTP request with JSON body. Returns parsed JSON response.
+ *
+ * For partner API clients that don't need the bridge.
+ */
+async function request(url, options = {}) {
+    const { method = "GET", headers = {}, body, timeout = 30000 } = options;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), timeout);
+    try {
+        const response = await fetch(url, {
+            method,
+            headers: {
+                "Content-Type": "application/json",
+                ...headers,
+            },
+            body: body ? JSON.stringify(body) : undefined,
+            signal: controller.signal,
+        });
+        if (!response.ok) {
+            const text = await response.text().catch(() => "");
+            throw new W3ActionError("HTTP_ERROR", `${response.status}: ${text}`, {
+                statusCode: response.status,
+            });
+        }
+        return (await response.json());
+    }
+    finally {
+        clearTimeout(timer);
+    }
+}
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/command.js
+
+
+/**
+ * Create a command router that dispatches on the `command` input.
+ *
+ * Usage:
+ *   const router = createCommandRouter({
+ *     "create-payment": async () => { ... },
+ *     "get-payment": async () => { ... },
+ *   });
+ *   router();  // reads `command` input, dispatches, handles errors
+ */
+function createCommandRouter(commands) {
+    return () => {
+        const command = lib_core.getInput("command", { required: true });
+        const handler = commands[command];
+        if (!handler) {
+            const available = Object.keys(commands).join(", ");
+            lib_core.setFailed(`Unknown command: '${command}'. Available: ${available}`);
+            return;
+        }
+        handler().catch(handleError);
+    };
+}
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/bridge.js
+/**
+ * W3 Syscall Bridge client.
+ *
+ * The bridge is an HTTP server running on a Unix socket (production)
+ * or TCP port (macOS dev fallback), started per-step by the Docker
+ * backend. It provides access to chain operations, cryptographic
+ * primitives, and protocol-managed secrets without bundling SDKs
+ * in the action container.
+ *
+ * Connection is automatic:
+ *   - $W3_BRIDGE_SOCKET → Unix socket (production)
+ *   - $W3_BRIDGE_URL    → TCP URL (macOS Docker Desktop fallback)
+ *
+ * Usage:
+ *   import { bridge } from "@w3-io/action-core";
+ *
+ *   const balance = await bridge.chain("ethereum", "get-balance", {
+ *     address: "0x...",
+ *   });
+ *
+ *   const hash = await bridge.crypto("keccak-256", { data: "0xdeadbeef" });
+ */
+
+// ---------------------------------------------------------------------------
+// Transport
+// ---------------------------------------------------------------------------
+function resolveEndpoint() {
+    const bridgeUrl = process.env.W3_BRIDGE_URL;
+    if (bridgeUrl) {
+        return { url: bridgeUrl };
+    }
+    const socketPath = process.env.W3_BRIDGE_SOCKET ?? "/var/run/w3/bridge.sock";
+    return { url: "http://localhost", socketPath };
+}
+async function bridgeRequest(path, body) {
+    const { url, socketPath } = resolveEndpoint();
+    if (socketPath) {
+        const http = await Promise.resolve(/* import() */).then(__nccwpck_require__.t.bind(__nccwpck_require__, 7067, 19));
+        return new Promise((resolve, reject) => {
+            const payload = body ? JSON.stringify(body) : undefined;
+            const req = http.request({
+                socketPath,
+                path,
+                method: body ? "POST" : "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    ...(payload
+                        ? { "Content-Length": Buffer.byteLength(payload) }
+                        : {}),
+                },
+            }, (res) => {
+                let data = "";
+                res.on("data", (chunk) => (data += chunk));
+                res.on("end", () => {
+                    if (!res.statusCode || res.statusCode >= 400) {
+                        try {
+                            const err = JSON.parse(data);
+                            reject(new W3ActionError(err.code ?? "BRIDGE_ERROR", err.error ?? `Bridge returned ${res.statusCode}`, { statusCode: res.statusCode, details: err }));
+                        }
+                        catch {
+                            reject(new W3ActionError("BRIDGE_ERROR", data || `HTTP ${res.statusCode}`, { statusCode: res.statusCode }));
+                        }
+                        return;
+                    }
+                    try {
+                        resolve(JSON.parse(data));
+                    }
+                    catch {
+                        resolve(data);
+                    }
+                });
+            });
+            req.on("error", (err) => reject(new W3ActionError("BRIDGE_UNAVAILABLE", err.message)));
+            if (payload)
+                req.write(payload);
+            req.end();
+        });
+    }
+    // TCP transport via fetch
+    const fullUrl = `${url}${path}`;
+    const init = {
+        method: body ? "POST" : "GET",
+        headers: { "Content-Type": "application/json" },
+        ...(body ? { body: JSON.stringify(body) } : {}),
+    };
+    const res = await fetch(fullUrl, init);
+    const text = await res.text();
+    if (!res.ok) {
+        let parsed;
+        try {
+            parsed = JSON.parse(text);
+        }
+        catch {
+            // not JSON
+        }
+        throw new W3ActionError(parsed?.code ?? "BRIDGE_ERROR", parsed?.error ?? text ?? `Bridge returned ${res.status}`, { statusCode: res.status, details: parsed });
+    }
+    try {
+        return JSON.parse(text);
+    }
+    catch {
+        return text;
+    }
+}
+// ---------------------------------------------------------------------------
+// Public API
+// ---------------------------------------------------------------------------
+async function health() {
+    try {
+        const res = (await bridgeRequest("/health"));
+        return res.ok === true;
+    }
+    catch {
+        return false;
+    }
+}
+async function chain(chainName, action, params, network) {
+    return (await bridgeRequest(`/${chainName}/${action}`, {
+        network: network ?? chainName,
+        params,
+    }));
+}
+async function bridge_crypto(action, params) {
+    return (await bridgeRequest(`/crypto/${action}`, {
+        params,
+    }));
+}
+/**
+ * The bridge client.
+ *
+ *   import { bridge } from "@w3-io/action-core";
+ *
+ *   const bal = await bridge.chain("ethereum", "get-balance", { address });
+ *   const hash = await bridge.crypto("keccak-256", { data: "0x..." });
+ *   const ok = await bridge.health();
+ */
+const bridge = {
+    health,
+    chain,
+    crypto: bridge_crypto,
+};
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/summary.js
+
+/**
+ * Write a job summary safely.
+ *
+ * Wraps `@actions/core` summary with proper `await` and error handling.
+ * The W3 runner sets GITHUB_STEP_SUMMARY and mounts a writable file,
+ * so this works on both GitHub Actions and W3. If the summary file is
+ * unavailable (local dev, CI without summary support), the write is
+ * silently skipped.
+ *
+ * Usage:
+ *   await writeSummary("My Action: deposit", [
+ *     ["Amount", "1000 USDC"],
+ *     ["TX", "`0xabc...`"],
+ *   ]);
+ *
+ *   await writeSummary("My Action: query", result);
+ */
+async function writeSummary(heading, content) {
+    try {
+        core.summary.addHeading(heading, 3);
+        if (typeof content === "string") {
+            core.summary.addRaw(content);
+        }
+        else if (Array.isArray(content)) {
+            // Key-value pairs rendered as markdown
+            for (const [key, value] of content) {
+                core.summary.addRaw(`**${key}:** ${value}\n\n`);
+            }
+        }
+        else {
+            core.summary.addCodeBlock(JSON.stringify(content, null, 2), "json");
+        }
+        await core.summary.write();
+    }
+    catch {
+        // Silently skip — environment may not support job summaries
+    }
+}
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/test.js
+/**
+ * Test utilities for W3 actions.
+ *
+ * Mocks @actions/core so you can test command handlers in isolation
+ * without running the full GitHub Actions runtime.
+ */
+let _inputs = {};
+let _outputs = new Map();
+let _failed = null;
+function mockAction(inputs) {
+    _inputs = inputs;
+    _outputs = new Map();
+    _failed = null;
+    for (const [key, value] of Object.entries(inputs)) {
+        const envKey = `INPUT_${key.replace(/-/g, "_").toUpperCase()}`;
+        process.env[envKey] = value;
+    }
+}
+function getOutput(name) {
+    return _outputs.get(name);
+}
+function expectOutput(name, validator) {
+    const value = _outputs.get(name);
+    if (value === undefined) {
+        throw new Error(`Expected output "${name}" to be set. Got: ${JSON.stringify(Object.fromEntries(_outputs))}`);
+    }
+    if (validator && !validator(value)) {
+        throw new Error(`Output "${name}" failed validation. Value: ${value}`);
+    }
+}
+function expectFailed(pattern) {
+    if (_failed === null) {
+        throw new Error("Expected action to fail, but it succeeded");
+    }
+    if (pattern) {
+        const matches = typeof pattern === "string"
+            ? _failed.includes(pattern)
+            : pattern.test(_failed);
+        if (!matches) {
+            throw new Error(`Expected failure matching "${pattern}", got: "${_failed}"`);
+        }
+    }
+}
+function expectSuccess() {
+    if (_failed !== null) {
+        throw new Error(`Expected action to succeed, but it failed: "${_failed}"`);
+    }
+}
+function cleanupMock() {
+    for (const key of Object.keys(process.env)) {
+        if (key.startsWith("INPUT_")) {
+            delete process.env[key];
+        }
+    }
+    _inputs = {};
+    _outputs = new Map();
+    _failed = null;
+}
+function createMockCore() {
+    const noopChain = () => ({ addRaw: noopChain, addHeading: noopChain, addCodeBlock: noopChain, write: async () => { } });
+    return {
+        getInput: (name, opts) => {
+            const value = _inputs[name] ?? "";
+            if (opts?.required && !value) {
+                throw new Error(`Input required and not supplied: ${name}`);
+            }
+            return value;
+        },
+        setOutput: (name, value) => {
+            _outputs.set(name, typeof value === "string" ? value : JSON.stringify(value));
+        },
+        setFailed: (message) => {
+            _failed = message;
+        },
+        info: (_msg) => { },
+        warning: (_msg) => { },
+        error: (_msg) => { },
+        debug: (_msg) => { },
+        summary: { addHeading: noopChain, addRaw: noopChain, addCodeBlock: noopChain, write: async () => { } },
+    };
+}
+
+;// CONCATENATED MODULE: ./node_modules/@w3-io/action-core/dist/index.js
+
+
+
+
+
+
+
+
+
 ;// CONCATENATED MODULE: ./src/hyperbolic.js
 /**
  * Hyperbolic API client.
@@ -27449,21 +27927,13 @@ var core = __nccwpck_require__(7484);
  * a custom action or integration.
  */
 
-const DEFAULT_BASE_URL = 'https://api.hyperbolic.xyz'
 
-class HyperbolicError extends Error {
-  constructor(message, { status, body, code } = {}) {
-    super(message)
-    this.name = 'HyperbolicError'
-    this.status = status
-    this.body = body
-    this.code = code
-  }
-}
+
+const DEFAULT_BASE_URL = 'https://api.hyperbolic.xyz'
 
 class HyperbolicClient {
   constructor({ apiKey, baseUrl = DEFAULT_BASE_URL } = {}) {
-    if (!apiKey) throw new HyperbolicError('API key is required', { code: 'MISSING_API_KEY' })
+    if (!apiKey) throw new W3ActionError('MISSING_API_KEY', 'API key is required')
     this.apiKey = apiKey
     this.baseUrl = baseUrl.replace(/\/+$/, '')
   }
@@ -27488,9 +27958,8 @@ class HyperbolicClient {
    * @returns {object} {content, modelUsed, inputTokens, outputTokens, finishReason, toolCalls}
    */
   async chat({ model, messages, temperature, topP, maxTokens, responseFormat, seed, stop, tools }) {
-    if (!model) throw new HyperbolicError('model is required', { code: 'MISSING_MODEL' })
-    if (!messages?.length)
-      throw new HyperbolicError('messages is required', { code: 'MISSING_MESSAGES' })
+    if (!model) throw new W3ActionError('MISSING_MODEL', 'model is required')
+    if (!messages?.length) throw new W3ActionError('MISSING_MESSAGES', 'messages is required')
 
     const body = {
       model,
@@ -27544,7 +28013,7 @@ class HyperbolicClient {
     lora,
     loraWeight = 0.8,
   }) {
-    if (!prompt) throw new HyperbolicError('prompt is required', { code: 'MISSING_PROMPT' })
+    if (!prompt) throw new W3ActionError('MISSING_PROMPT', 'prompt is required')
 
     const body = {
       model_name: model,
@@ -27583,7 +28052,7 @@ class HyperbolicClient {
    * @returns {object} {audioBase64}
    */
   async generateAudio({ text, language = 'EN', speaker = 'EN-US', speed = 1.0 }) {
-    if (!text) throw new HyperbolicError('text is required', { code: 'MISSING_TEXT' })
+    if (!text) throw new W3ActionError('MISSING_TEXT', 'text is required')
 
     const body = { text, language, speaker_id: speaker, speed }
     const data = await this.post('/v1/audio/generation', body)
@@ -27608,10 +28077,10 @@ class HyperbolicClient {
    * @returns {object} {content, modelUsed, inputTokens, outputTokens}
    */
   async analyzeImage({ model, prompt, imageUrl, imageBase64 }) {
-    if (!model) throw new HyperbolicError('model is required', { code: 'MISSING_MODEL' })
-    if (!prompt) throw new HyperbolicError('prompt is required', { code: 'MISSING_PROMPT' })
+    if (!model) throw new W3ActionError('MISSING_MODEL', 'model is required')
+    if (!prompt) throw new W3ActionError('MISSING_PROMPT', 'prompt is required')
     if (!imageUrl && !imageBase64)
-      throw new HyperbolicError('image-url or image-base64 is required', { code: 'MISSING_IMAGE' })
+      throw new W3ActionError('MISSING_IMAGE', 'image-url or image-base64 is required')
 
     const imageContent = imageUrl
       ? { type: 'image_url', image_url: { url: imageUrl } }
@@ -27649,7 +28118,7 @@ class HyperbolicClient {
    * @returns {object} {instanceId, sshCommand, status}
    */
   async rentGpu({ gpuType, gpuCount = 1 }) {
-    if (!gpuType) throw new HyperbolicError('gpu-type is required', { code: 'MISSING_GPU_TYPE' })
+    if (!gpuType) throw new W3ActionError('MISSING_GPU_TYPE', 'gpu-type is required')
 
     const data = await this.post('/v1/marketplace/instances', {
       gpu_type: gpuType,
@@ -27670,8 +28139,7 @@ class HyperbolicClient {
    * @returns {object} {status}
    */
   async terminateGpu(instanceId) {
-    if (!instanceId)
-      throw new HyperbolicError('instance-id is required', { code: 'MISSING_INSTANCE_ID' })
+    if (!instanceId) throw new W3ActionError('MISSING_INSTANCE_ID', 'instance-id is required')
 
     const data = await this.request('DELETE', `/v1/marketplace/instances/${instanceId}`)
     return { status: data.status || 'terminated' }
@@ -27691,44 +28159,20 @@ class HyperbolicClient {
 
   async request(method, path, body) {
     const url = `${this.baseUrl}${path}`
-    const options = {
+    const { status, body: parsed } = await request(url, {
       method,
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    }
-    if (body) options.body = JSON.stringify(body)
+      body,
+    })
 
-    const response = await fetch(url, options)
-    const text = await response.text()
+    // 204 No Content (typical for DELETE)
+    if (status === 204) return {}
 
-    if (response.status === 429) {
-      throw new HyperbolicError('Rate limit exceeded', {
-        status: 429,
-        body: text,
-        code: 'RATE_LIMIT',
-      })
-    }
-
-    if (!response.ok) {
-      throw new HyperbolicError(`Hyperbolic API error: ${response.status}`, {
-        status: response.status,
-        body: text,
-        code: 'API_ERROR',
-      })
-    }
-
-    try {
-      return JSON.parse(text)
-    } catch {
-      throw new HyperbolicError('Invalid JSON response', {
-        status: response.status,
-        body: text,
-        code: 'PARSE_ERROR',
-      })
-    }
+    return parsed
   }
 }
 
@@ -27744,25 +28188,25 @@ function parseJson(input, name) {
   try {
     return JSON.parse(input)
   } catch {
-    throw new HyperbolicError(`Invalid JSON for ${name}`, { code: 'INVALID_JSON' })
+    throw new W3ActionError('INVALID_JSON', `Invalid JSON for ${name}`)
   }
 }
 
 function getClient() {
   return new HyperbolicClient({
-    apiKey: core.getInput('api-key', { required: true }),
-    baseUrl: core.getInput('api-url') || undefined,
+    apiKey: lib_core.getInput('api-key', { required: true }),
+    baseUrl: lib_core.getInput('api-url') || undefined,
   })
 }
 
 // -- Job summary --------------------------------------------------------------
 
-function writeSummary(command, result) {
+function src_writeSummary(command, result) {
   const heading = `Hyperbolic: ${command}`
 
   if (command === 'chat') {
     const preview = result.content?.slice(0, 200) || ''
-    core.summary
+    lib_core.summary
       .addHeading(heading, 3)
       .addRaw(`**Model:** \`${result.modelUsed}\`\n\n`)
       .addRaw(
@@ -27774,7 +28218,7 @@ function writeSummary(command, result) {
   }
 
   if (command === 'generate-image') {
-    core.summary
+    lib_core.summary
       .addHeading(heading, 3)
       .addRaw(`**Model:** \`${result.model}\`\n\n`)
       .addRaw(`Image generated (${result.imageBase64 ? 'base64 in result' : 'no data'})\n`)
@@ -27783,7 +28227,7 @@ function writeSummary(command, result) {
   }
 
   if (command === 'generate-audio') {
-    core.summary
+    lib_core.summary
       .addHeading(heading, 3)
       .addRaw(`Audio generated (${result.audioBase64 ? 'base64 in result' : 'no data'})\n`)
       .write()
@@ -27791,7 +28235,7 @@ function writeSummary(command, result) {
   }
 
   if (command === 'rent-gpu') {
-    core.summary
+    lib_core.summary
       .addHeading(heading, 3)
       .addRaw(`**Instance:** \`${result.instanceId}\`\n\n`)
       .addRaw(`**Status:** ${result.status}\n`)
@@ -27800,7 +28244,7 @@ function writeSummary(command, result) {
   }
 
   // Default summary
-  core.summary
+  lib_core.summary
     .addHeading(heading, 3)
     .addCodeBlock(JSON.stringify(result, null, 2), 'json')
     .write()
@@ -27811,92 +28255,94 @@ function writeSummary(command, result) {
 async function runAndSummarize(command, handler) {
   const client = getClient()
   const result = await handler(client)
-  writeSummary(command, result)
+  src_writeSummary(command, result)
   return result
 }
 
-const router = (0,action_core.createCommandRouter)({
+const router = createCommandRouter({
   chat: async () => {
     const result = await runAndSummarize('chat', async (client) => {
-      const messages = parseJson(core.getInput('messages', { required: true }), 'messages')
-      const stop = core.getInput('stop')
+      const messages = parseJson(lib_core.getInput('messages', { required: true }), 'messages')
+      const stop = lib_core.getInput('stop')
 
       return client.chat({
-        model: core.getInput('model', { required: true }),
+        model: lib_core.getInput('model', { required: true }),
         messages,
-        temperature: core.getInput('temperature') ? Number(core.getInput('temperature')) : undefined,
-        topP: core.getInput('top-p') ? Number(core.getInput('top-p')) : undefined,
-        maxTokens: core.getInput('max-tokens') ? Number(core.getInput('max-tokens')) : undefined,
-        responseFormat: parseJson(core.getInput('response-format'), 'response-format'),
-        seed: core.getInput('seed') ? Number(core.getInput('seed')) : undefined,
+        temperature: lib_core.getInput('temperature')
+          ? Number(lib_core.getInput('temperature'))
+          : undefined,
+        topP: lib_core.getInput('top-p') ? Number(lib_core.getInput('top-p')) : undefined,
+        maxTokens: lib_core.getInput('max-tokens') ? Number(lib_core.getInput('max-tokens')) : undefined,
+        responseFormat: parseJson(lib_core.getInput('response-format'), 'response-format'),
+        seed: lib_core.getInput('seed') ? Number(lib_core.getInput('seed')) : undefined,
         stop: stop ? stop.split(',').map((s) => s.trim()) : undefined,
-        tools: parseJson(core.getInput('tools'), 'tools'),
+        tools: parseJson(lib_core.getInput('tools'), 'tools'),
       })
     })
-    ;(0,action_core.setJsonOutput)('result', result)
+    setJsonOutput('result', result)
   },
 
   'generate-image': async () => {
     const result = await runAndSummarize('generate-image', async (client) => {
       return client.generateImage({
-        model: core.getInput('model') || undefined,
-        prompt: core.getInput('prompt', { required: true }),
-        height: core.getInput('height') ? Number(core.getInput('height')) : undefined,
-        width: core.getInput('width') ? Number(core.getInput('width')) : undefined,
-        steps: core.getInput('steps') ? Number(core.getInput('steps')) : undefined,
-        lora: core.getInput('lora') || undefined,
-        loraWeight: core.getInput('lora-weight') ? Number(core.getInput('lora-weight')) : undefined,
+        model: lib_core.getInput('model') || undefined,
+        prompt: lib_core.getInput('prompt', { required: true }),
+        height: lib_core.getInput('height') ? Number(lib_core.getInput('height')) : undefined,
+        width: lib_core.getInput('width') ? Number(lib_core.getInput('width')) : undefined,
+        steps: lib_core.getInput('steps') ? Number(lib_core.getInput('steps')) : undefined,
+        lora: lib_core.getInput('lora') || undefined,
+        loraWeight: lib_core.getInput('lora-weight') ? Number(lib_core.getInput('lora-weight')) : undefined,
       })
     })
-    ;(0,action_core.setJsonOutput)('result', result)
+    setJsonOutput('result', result)
   },
 
   'generate-audio': async () => {
     const result = await runAndSummarize('generate-audio', async (client) => {
       return client.generateAudio({
-        text: core.getInput('text', { required: true }),
-        language: core.getInput('language') || undefined,
-        speaker: core.getInput('speaker') || undefined,
-        speed: core.getInput('speed') ? Number(core.getInput('speed')) : undefined,
+        text: lib_core.getInput('text', { required: true }),
+        language: lib_core.getInput('language') || undefined,
+        speaker: lib_core.getInput('speaker') || undefined,
+        speed: lib_core.getInput('speed') ? Number(lib_core.getInput('speed')) : undefined,
       })
     })
-    ;(0,action_core.setJsonOutput)('result', result)
+    setJsonOutput('result', result)
   },
 
   'analyze-image': async () => {
     const result = await runAndSummarize('analyze-image', async (client) => {
       return client.analyzeImage({
-        model: core.getInput('model', { required: true }),
-        prompt: core.getInput('prompt', { required: true }),
-        imageUrl: core.getInput('image-url') || undefined,
-        imageBase64: core.getInput('image-base64') || undefined,
+        model: lib_core.getInput('model', { required: true }),
+        prompt: lib_core.getInput('prompt', { required: true }),
+        imageUrl: lib_core.getInput('image-url') || undefined,
+        imageBase64: lib_core.getInput('image-base64') || undefined,
       })
     })
-    ;(0,action_core.setJsonOutput)('result', result)
+    setJsonOutput('result', result)
   },
 
   'list-gpus': async () => {
     const result = await runAndSummarize('list-gpus', async (client) => {
       return client.listGpus()
     })
-    ;(0,action_core.setJsonOutput)('result', result)
+    setJsonOutput('result', result)
   },
 
   'rent-gpu': async () => {
     const result = await runAndSummarize('rent-gpu', async (client) => {
       return client.rentGpu({
-        gpuType: core.getInput('gpu-type', { required: true }),
-        gpuCount: core.getInput('gpu-count') ? Number(core.getInput('gpu-count')) : undefined,
+        gpuType: lib_core.getInput('gpu-type', { required: true }),
+        gpuCount: lib_core.getInput('gpu-count') ? Number(lib_core.getInput('gpu-count')) : undefined,
       })
     })
-    ;(0,action_core.setJsonOutput)('result', result)
+    setJsonOutput('result', result)
   },
 
   'terminate-gpu': async () => {
     const result = await runAndSummarize('terminate-gpu', async (client) => {
-      return client.terminateGpu(core.getInput('instance-id', { required: true }))
+      return client.terminateGpu(lib_core.getInput('instance-id', { required: true }))
     })
-    ;(0,action_core.setJsonOutput)('result', result)
+    setJsonOutput('result', result)
   },
 })
 

@@ -9,21 +9,13 @@
  * a custom action or integration.
  */
 
-const DEFAULT_BASE_URL = 'https://api.hyperbolic.xyz'
+import { request as coreRequest, W3ActionError } from '@w3-io/action-core'
 
-export class HyperbolicError extends Error {
-  constructor(message, { status, body, code } = {}) {
-    super(message)
-    this.name = 'HyperbolicError'
-    this.status = status
-    this.body = body
-    this.code = code
-  }
-}
+const DEFAULT_BASE_URL = 'https://api.hyperbolic.xyz'
 
 export class HyperbolicClient {
   constructor({ apiKey, baseUrl = DEFAULT_BASE_URL } = {}) {
-    if (!apiKey) throw new HyperbolicError('API key is required', { code: 'MISSING_API_KEY' })
+    if (!apiKey) throw new W3ActionError('MISSING_API_KEY', 'API key is required')
     this.apiKey = apiKey
     this.baseUrl = baseUrl.replace(/\/+$/, '')
   }
@@ -48,9 +40,8 @@ export class HyperbolicClient {
    * @returns {object} {content, modelUsed, inputTokens, outputTokens, finishReason, toolCalls}
    */
   async chat({ model, messages, temperature, topP, maxTokens, responseFormat, seed, stop, tools }) {
-    if (!model) throw new HyperbolicError('model is required', { code: 'MISSING_MODEL' })
-    if (!messages?.length)
-      throw new HyperbolicError('messages is required', { code: 'MISSING_MESSAGES' })
+    if (!model) throw new W3ActionError('MISSING_MODEL', 'model is required')
+    if (!messages?.length) throw new W3ActionError('MISSING_MESSAGES', 'messages is required')
 
     const body = {
       model,
@@ -104,7 +95,7 @@ export class HyperbolicClient {
     lora,
     loraWeight = 0.8,
   }) {
-    if (!prompt) throw new HyperbolicError('prompt is required', { code: 'MISSING_PROMPT' })
+    if (!prompt) throw new W3ActionError('MISSING_PROMPT', 'prompt is required')
 
     const body = {
       model_name: model,
@@ -143,7 +134,7 @@ export class HyperbolicClient {
    * @returns {object} {audioBase64}
    */
   async generateAudio({ text, language = 'EN', speaker = 'EN-US', speed = 1.0 }) {
-    if (!text) throw new HyperbolicError('text is required', { code: 'MISSING_TEXT' })
+    if (!text) throw new W3ActionError('MISSING_TEXT', 'text is required')
 
     const body = { text, language, speaker_id: speaker, speed }
     const data = await this.post('/v1/audio/generation', body)
@@ -168,10 +159,10 @@ export class HyperbolicClient {
    * @returns {object} {content, modelUsed, inputTokens, outputTokens}
    */
   async analyzeImage({ model, prompt, imageUrl, imageBase64 }) {
-    if (!model) throw new HyperbolicError('model is required', { code: 'MISSING_MODEL' })
-    if (!prompt) throw new HyperbolicError('prompt is required', { code: 'MISSING_PROMPT' })
+    if (!model) throw new W3ActionError('MISSING_MODEL', 'model is required')
+    if (!prompt) throw new W3ActionError('MISSING_PROMPT', 'prompt is required')
     if (!imageUrl && !imageBase64)
-      throw new HyperbolicError('image-url or image-base64 is required', { code: 'MISSING_IMAGE' })
+      throw new W3ActionError('MISSING_IMAGE', 'image-url or image-base64 is required')
 
     const imageContent = imageUrl
       ? { type: 'image_url', image_url: { url: imageUrl } }
@@ -209,7 +200,7 @@ export class HyperbolicClient {
    * @returns {object} {instanceId, sshCommand, status}
    */
   async rentGpu({ gpuType, gpuCount = 1 }) {
-    if (!gpuType) throw new HyperbolicError('gpu-type is required', { code: 'MISSING_GPU_TYPE' })
+    if (!gpuType) throw new W3ActionError('MISSING_GPU_TYPE', 'gpu-type is required')
 
     const data = await this.post('/v1/marketplace/instances', {
       gpu_type: gpuType,
@@ -230,8 +221,7 @@ export class HyperbolicClient {
    * @returns {object} {status}
    */
   async terminateGpu(instanceId) {
-    if (!instanceId)
-      throw new HyperbolicError('instance-id is required', { code: 'MISSING_INSTANCE_ID' })
+    if (!instanceId) throw new W3ActionError('MISSING_INSTANCE_ID', 'instance-id is required')
 
     const data = await this.request('DELETE', `/v1/marketplace/instances/${instanceId}`)
     return { status: data.status || 'terminated' }
@@ -251,43 +241,19 @@ export class HyperbolicClient {
 
   async request(method, path, body) {
     const url = `${this.baseUrl}${path}`
-    const options = {
+    const { status, body: parsed } = await coreRequest(url, {
       method,
       headers: {
         Authorization: `Bearer ${this.apiKey}`,
         'Content-Type': 'application/json',
         Accept: 'application/json',
       },
-    }
-    if (body) options.body = JSON.stringify(body)
+      body,
+    })
 
-    const response = await fetch(url, options)
-    const text = await response.text()
+    // 204 No Content (typical for DELETE)
+    if (status === 204) return {}
 
-    if (response.status === 429) {
-      throw new HyperbolicError('Rate limit exceeded', {
-        status: 429,
-        body: text,
-        code: 'RATE_LIMIT',
-      })
-    }
-
-    if (!response.ok) {
-      throw new HyperbolicError(`Hyperbolic API error: ${response.status}`, {
-        status: response.status,
-        body: text,
-        code: 'API_ERROR',
-      })
-    }
-
-    try {
-      return JSON.parse(text)
-    } catch {
-      throw new HyperbolicError('Invalid JSON response', {
-        status: response.status,
-        body: text,
-        code: 'PARSE_ERROR',
-      })
-    }
+    return parsed
   }
 }
