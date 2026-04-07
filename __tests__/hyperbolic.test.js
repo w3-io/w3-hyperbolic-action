@@ -1,27 +1,51 @@
 import { jest } from '@jest/globals'
 import { readFileSync } from 'fs'
-import { HyperbolicClient, HyperbolicError } from '../src/hyperbolic.js'
 
-const chatFixture = JSON.parse(readFileSync(new URL('../__fixtures__/chat-response.json', import.meta.url)))
-const imageFixture = JSON.parse(readFileSync(new URL('../__fixtures__/image-response.json', import.meta.url)))
-const audioFixture = JSON.parse(readFileSync(new URL('../__fixtures__/audio-response.json', import.meta.url)))
+const chatFixture = JSON.parse(
+  readFileSync(new URL('../__fixtures__/chat-response.json', import.meta.url)),
+)
+const imageFixture = JSON.parse(
+  readFileSync(new URL('../__fixtures__/image-response.json', import.meta.url)),
+)
+const audioFixture = JSON.parse(
+  readFileSync(new URL('../__fixtures__/audio-response.json', import.meta.url)),
+)
 
-const mockFetch = jest.fn()
-global.fetch = mockFetch
+const mockRequest = jest.fn()
+const actionCore = await import('@w3-io/action-core')
+
+jest.unstable_mockModule('@w3-io/action-core', () => ({
+  ...actionCore,
+  request: mockRequest,
+}))
+
+const { HyperbolicClient } = await import('../src/hyperbolic.js')
+const { W3ActionError } = actionCore
 
 function mockOk(data) {
-  mockFetch.mockResolvedValueOnce({
-    ok: true,
+  mockRequest.mockResolvedValueOnce({
     status: 200,
-    text: async () => JSON.stringify(data),
+    headers: {},
+    body: data,
+    raw: JSON.stringify(data),
   })
 }
 
 function mockError(status, body) {
-  mockFetch.mockResolvedValueOnce({
-    ok: false,
-    status,
-    text: async () => body,
+  mockRequest.mockRejectedValueOnce(
+    new W3ActionError('HTTP_ERROR', `POST url: ${status}`, {
+      statusCode: status,
+      details: body,
+    }),
+  )
+}
+
+function mock204() {
+  mockRequest.mockResolvedValueOnce({
+    status: 204,
+    headers: {},
+    body: '',
+    raw: '',
   })
 }
 
@@ -29,7 +53,7 @@ describe('HyperbolicClient', () => {
   const client = new HyperbolicClient({ apiKey: 'test-key' })
 
   beforeEach(() => {
-    mockFetch.mockReset()
+    mockRequest.mockReset()
   })
 
   test('constructor requires api key', () => {
@@ -53,21 +77,21 @@ describe('HyperbolicClient', () => {
       expect(result.outputTokens).toBe(8)
       expect(result.totalTokens).toBe(20)
 
-      const [url, opts] = mockFetch.mock.calls[0]
+      const [url, opts] = mockRequest.mock.calls[0]
       expect(url).toBe('https://api.hyperbolic.xyz/v1/chat/completions')
       expect(opts.method).toBe('POST')
       expect(opts.headers.Authorization).toBe('Bearer test-key')
 
-      const body = JSON.parse(opts.body)
+      const body = opts.body
       expect(body.model).toBe('deepseek-ai/DeepSeek-V3')
       expect(body.temperature).toBe(0.1)
       expect(body.messages).toHaveLength(1)
     })
 
     test('requires model', async () => {
-      await expect(
-        client.chat({ messages: [{ role: 'user', content: 'hi' }] }),
-      ).rejects.toThrow('model is required')
+      await expect(client.chat({ messages: [{ role: 'user', content: 'hi' }] })).rejects.toThrow(
+        'model is required',
+      )
     })
 
     test('requires messages', async () => {
@@ -83,7 +107,7 @@ describe('HyperbolicClient', () => {
         responseFormat: { type: 'json_schema', json_schema: { name: 'test', strict: true } },
       })
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body.response_format.type).toBe('json_schema')
     })
 
@@ -97,7 +121,7 @@ describe('HyperbolicClient', () => {
         tools,
       })
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body.tools).toEqual(tools)
     })
 
@@ -109,7 +133,7 @@ describe('HyperbolicClient', () => {
         messages: [{ role: 'user', content: 'hi' }],
       })
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body).not.toHaveProperty('temperature')
       expect(body).not.toHaveProperty('top_p')
       expect(body).not.toHaveProperty('max_tokens')
@@ -126,7 +150,7 @@ describe('HyperbolicClient', () => {
       expect(result.imageBase64).toBeTruthy()
       expect(result.seed).toBe(42)
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body.prompt).toBe('a cat')
       expect(body.height).toBe(1024)
       expect(body.width).toBe(1024)
@@ -137,7 +161,7 @@ describe('HyperbolicClient', () => {
 
       await client.generateImage({ prompt: 'a logo', lora: 'Logo', loraWeight: 0.5 })
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body.lora).toEqual({ name: 'Logo', weight: 0.5 })
     })
 
@@ -154,7 +178,7 @@ describe('HyperbolicClient', () => {
 
       expect(result.audioBase64).toBeTruthy()
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body.text).toBe('Hello world')
       expect(body.language).toBe('EN')
       expect(body.speaker_id).toBe('EN-US')
@@ -175,7 +199,7 @@ describe('HyperbolicClient', () => {
         imageUrl: 'https://example.com/cat.jpg',
       })
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       const content = body.messages[0].content
       expect(content).toHaveLength(2)
       expect(content[0].type).toBe('text')
@@ -192,14 +216,14 @@ describe('HyperbolicClient', () => {
         imageBase64: 'abc123',
       })
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body.messages[0].content[1].image_url.url).toBe('data:image/jpeg;base64,abc123')
     })
 
     test('requires image', async () => {
-      await expect(
-        client.analyzeImage({ model: 'test', prompt: 'describe' }),
-      ).rejects.toThrow('image-url or image-base64 is required')
+      await expect(client.analyzeImage({ model: 'test', prompt: 'describe' })).rejects.toThrow(
+        'image-url or image-base64 is required',
+      )
     })
   })
 
@@ -213,7 +237,7 @@ describe('HyperbolicClient', () => {
       expect(result.sshCommand).toBe('ssh root@1.2.3.4')
       expect(result.status).toBe('provisioning')
 
-      const body = JSON.parse(mockFetch.mock.calls[0][1].body)
+      const body = mockRequest.mock.calls[0][1].body
       expect(body.gpu_type).toBe('H100-SXM')
       expect(body.gpu_count).toBe(2)
     })
@@ -229,33 +253,30 @@ describe('HyperbolicClient', () => {
 
       expect(result.status).toBe('terminated')
 
-      const [url, opts] = mockFetch.mock.calls[0]
+      const [url, opts] = mockRequest.mock.calls[0]
       expect(url).toContain('/v1/marketplace/instances/i-abc123')
       expect(opts.method).toBe('DELETE')
+    })
+
+    test('terminateGpu handles 204 No Content', async () => {
+      mock204()
+
+      const result = await client.terminateGpu('i-abc123')
+
+      expect(result.status).toBe('terminated')
     })
   })
 
   describe('error handling', () => {
-    test('throws on rate limit', async () => {
-      mockError(429, 'Rate limit exceeded')
-
-      try {
-        await client.chat({ model: 'test', messages: [{ role: 'user', content: 'hi' }] })
-      } catch (e) {
-        expect(e).toBeInstanceOf(HyperbolicError)
-        expect(e.code).toBe('RATE_LIMIT')
-      }
-    })
-
-    test('throws on API error', async () => {
+    test('throws W3ActionError on API error', async () => {
       mockError(500, 'Internal Server Error')
 
       try {
         await client.chat({ model: 'test', messages: [{ role: 'user', content: 'hi' }] })
       } catch (e) {
-        expect(e).toBeInstanceOf(HyperbolicError)
-        expect(e.code).toBe('API_ERROR')
-        expect(e.status).toBe(500)
+        expect(e).toBeInstanceOf(W3ActionError)
+        expect(e.code).toBe('HTTP_ERROR')
+        expect(e.statusCode).toBe(500)
       }
     })
   })

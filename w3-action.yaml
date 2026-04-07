@@ -36,7 +36,7 @@ commands:
     outputs:
       result:
         type: object
-        description: "{content, modelUsed, inputTokens, outputTokens, totalTokens, finishReason, toolCalls}"
+        description: '{content, modelUsed, inputTokens, outputTokens, totalTokens, finishReason, toolCalls}'
 
   - name: generate-image
     description: >
@@ -66,7 +66,7 @@ commands:
     outputs:
       result:
         type: object
-        description: "{imageBase64, model, seed}"
+        description: '{imageBase64, model, seed}'
 
   - name: generate-audio
     description: >
@@ -80,15 +80,15 @@ commands:
       language:
         type: string
         required: false
-        description: "Language code: EN, ES, FR, ZH, JP, KR"
+        description: 'Language code: EN, ES, FR, ZH, JP, KR'
       speaker:
         type: string
         required: false
-        description: "Speaker accent (e.g. EN-US, EN-BR, EN-AU)"
+        description: 'Speaker accent (e.g. EN-US, EN-BR, EN-AU)'
     outputs:
       result:
         type: object
-        description: "{audioBase64}"
+        description: '{audioBase64}'
 
   - name: analyze-image
     description: >
@@ -114,7 +114,7 @@ commands:
     outputs:
       result:
         type: object
-        description: "{content, modelUsed, inputTokens, outputTokens}"
+        description: '{content, modelUsed, inputTokens, outputTokens}'
 
   - name: rent-gpu
     description: >
@@ -123,7 +123,7 @@ commands:
       gpu-type:
         type: string
         required: true
-        description: "GPU type (e.g. H100-SXM, A100-SXM, RTX-4090)"
+        description: 'GPU type (e.g. H100-SXM, A100-SXM, RTX-4090)'
       gpu-count:
         type: number
         required: false
@@ -131,7 +131,7 @@ commands:
     outputs:
       result:
         type: object
-        description: "{instanceId, sshCommand, status}"
+        description: '{instanceId, sshCommand, status}'
 
   - name: list-gpus
     description: List available GPU types and pricing.
@@ -151,4 +151,4 @@ commands:
     outputs:
       result:
         type: object
-        description: "{status}"
+        description: '{status}'
