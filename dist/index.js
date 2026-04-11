@@ -27390,105 +27390,22 @@ function parseParams (str) {
 module.exports = parseParams
 
 
-/***/ })
+/***/ }),
 
-/******/ });
-/************************************************************************/
-/******/ // The module cache
-/******/ var __webpack_module_cache__ = {};
-/******/ 
-/******/ // The require function
-/******/ function __nccwpck_require__(moduleId) {
-/******/ 	// Check if module is in cache
-/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
-/******/ 	if (cachedModule !== undefined) {
-/******/ 		return cachedModule.exports;
-/******/ 	}
-/******/ 	// Create a new module (and put it into the cache)
-/******/ 	var module = __webpack_module_cache__[moduleId] = {
-/******/ 		// no module.id needed
-/******/ 		// no module.loaded needed
-/******/ 		exports: {}
-/******/ 	};
-/******/ 
-/******/ 	// Execute the module function
-/******/ 	var threw = true;
-/******/ 	try {
-/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
-/******/ 		threw = false;
-/******/ 	} finally {
-/******/ 		if(threw) delete __webpack_module_cache__[moduleId];
-/******/ 	}
-/******/ 
-/******/ 	// Return the exports of the module
-/******/ 	return module.exports;
-/******/ }
-/******/ 
-/************************************************************************/
-/******/ /* webpack/runtime/create fake namespace object */
-/******/ (() => {
-/******/ 	var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
-/******/ 	var leafPrototypes;
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 16: return value when it's Promise-like
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__nccwpck_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = this(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if(typeof value === 'object' && value) {
-/******/ 			if((mode & 4) && value.__esModule) return value;
-/******/ 			if((mode & 16) && typeof value.then === 'function') return value;
-/******/ 		}
-/******/ 		var ns = Object.create(null);
-/******/ 		__nccwpck_require__.r(ns);
-/******/ 		var def = {};
-/******/ 		leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
-/******/ 		for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
-/******/ 			Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
-/******/ 		}
-/******/ 		def['default'] = () => (value);
-/******/ 		__nccwpck_require__.d(ns, def);
-/******/ 		return ns;
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/define property getters */
-/******/ (() => {
-/******/ 	// define getter functions for harmony exports
-/******/ 	__nccwpck_require__.d = (exports, definition) => {
-/******/ 		for(var key in definition) {
-/******/ 			if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
-/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
-/******/ 			}
-/******/ 		}
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/hasOwnProperty shorthand */
-/******/ (() => {
-/******/ 	__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/make namespace object */
-/******/ (() => {
-/******/ 	// define __esModule on exports
-/******/ 	__nccwpck_require__.r = (exports) => {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/ })();
-/******/ 
-/******/ /* webpack/runtime/compat */
-/******/ 
-/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
-/******/ 
-/************************************************************************/
-var __webpack_exports__ = {};
+/***/ 4653:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+
+// EXPORTS
+__nccwpck_require__.d(__webpack_exports__, {
+  FE: () => (/* reexport */ W3ActionError),
+  X4: () => (/* reexport */ createCommandRouter),
+  H4: () => (/* reexport */ handleError),
+  Em: () => (/* reexport */ request),
+  mI: () => (/* reexport */ setJsonOutput)
+});
+
+// UNUSED EXPORTS: bitcoin, bridge, cleanupMock, createMockCore, ethereum, expectFailed, expectOutput, expectSuccess, getOptionalInput, getOutput, mockAction, parseJsonInput, requireInput, setOutputs, solana, writeSummary
 
 // EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
 var lib_core = __nccwpck_require__(7484);
@@ -27653,8 +27570,17 @@ function createCommandRouter(commands) {
  *   - $W3_BRIDGE_URL    → TCP URL (macOS Docker Desktop fallback)
  *
  * Usage:
- *   import { bridge } from "@w3-io/action-core";
+ *   import { bridge, ethereum } from "@w3-io/action-core";
  *
+ *   // Typed helpers (recommended — autocomplete + type checking):
+ *   const receipt = await ethereum.callContract({
+ *     contract: "0x...",
+ *     method: "deposit(uint256)",
+ *     args: ["1000000"],
+ *     gasMultiplier: "1.5",
+ *   });
+ *
+ *   // Generic (full control):
  *   const balance = await bridge.chain("ethereum", "get-balance", {
  *     address: "0x...",
  *   });
@@ -27744,7 +27670,17 @@ async function bridgeRequest(path, body) {
     }
 }
 // ---------------------------------------------------------------------------
-// Public API
+// Internal helpers
+// ---------------------------------------------------------------------------
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function chainRequest(chainName, action, params, network) {
+    return bridgeRequest(`/${chainName}/${action}`, {
+        network: network ?? chainName,
+        params,
+    });
+}
+// ---------------------------------------------------------------------------
+// Public API — generic
 // ---------------------------------------------------------------------------
 async function health() {
     try {
@@ -27755,22 +27691,82 @@ async function health() {
         return false;
     }
 }
+/**
+ * Execute a chain operation.
+ *
+ * For type-safe calls, use the typed helpers (`ethereum`, `solana`,
+ * `bitcoin`) instead. This generic method accepts any params.
+ */
 async function chain(chainName, action, params, network) {
-    return (await bridgeRequest(`/${chainName}/${action}`, {
-        network: network ?? chainName,
-        params,
-    }));
+    return chainRequest(chainName, action, params, network);
 }
 async function bridge_crypto(action, params) {
     return (await bridgeRequest(`/crypto/${action}`, {
         params,
     }));
 }
+// ---------------------------------------------------------------------------
+// Public API — typed chain helpers
+// ---------------------------------------------------------------------------
+/** Typed Ethereum operations. */
+const ethereum = {
+    getBalance: (params, network) => chainRequest("ethereum", "get-balance", params, network),
+    readContract: (params, network) => chainRequest("ethereum", "read-contract", params, network),
+    callContract: (params, network) => chainRequest("ethereum", "call-contract", params, network),
+    transfer: (params, network) => chainRequest("ethereum", "transfer", params, network),
+    sendTransaction: (params, network) => chainRequest("ethereum", "send-transaction", params, network),
+    deployContract: (params, network) => chainRequest("ethereum", "deploy-contract", params, network),
+    transferToken: (params, network) => chainRequest("ethereum", "transfer-token", params, network),
+    approveToken: (params, network) => chainRequest("ethereum", "approve-token", params, network),
+    transferNft: (params, network) => chainRequest("ethereum", "transfer-nft", params, network),
+    getTransaction: (params, network) => chainRequest("ethereum", "get-transaction", params, network),
+    waitForTransaction: (params, network) => chainRequest("ethereum", "wait-for-transaction", params, network),
+    getEvents: (params, network) => chainRequest("ethereum", "get-events", params, network),
+    resolveName: (params, network) => chainRequest("ethereum", "resolve-name", params, network),
+    getTokenBalance: (params, network) => chainRequest("ethereum", "get-token-balance", params, network),
+    getTokenAllowance: (params, network) => chainRequest("ethereum", "get-token-allowance", params, network),
+    getNftOwner: (params, network) => chainRequest("ethereum", "get-nft-owner", params, network),
+    getNftMetadata: (params, network) => chainRequest("ethereum", "get-nft-metadata", params, network),
+};
+/** Typed Solana operations. */
+const solana = {
+    getBalance: (params, network) => chainRequest("solana", "get-balance", params, network),
+    transfer: (params, network) => chainRequest("solana", "transfer", params, network),
+    transferToken: (params, network) => chainRequest("solana", "transfer-token", params, network),
+    callProgram: (params, network) => chainRequest("solana", "call-program", params, network),
+    getAccount: (params, network) => chainRequest("solana", "get-account", params, network),
+    getTokenBalance: (params, network) => chainRequest("solana", "get-token-balance", params, network),
+    getTokenAccounts: (params, network) => chainRequest("solana", "get-token-accounts", params, network),
+    getTransaction: (params, network) => chainRequest("solana", "get-transaction", params, network),
+    waitForTransaction: (params, network) => chainRequest("solana", "wait-for-transaction", params, network),
+    /** Generate an ephemeral keypair for use as an additional signer. */
+    generateKeypair: () => bridgeRequest("/solana/generate-keypair", {}),
+    /** Get the payer's public key (no secret exposed). */
+    payerAddress: () => bridgeRequest("/solana/payer-address"),
+};
+/** Typed Bitcoin operations. */
+const bitcoin = {
+    getBalance: (params, network) => chainRequest("bitcoin", "get-balance", params, network),
+    send: (params, network) => chainRequest("bitcoin", "send", params, network),
+    getUtxos: (params, network) => chainRequest("bitcoin", "get-utxos", params, network),
+    getTransaction: (params, network) => chainRequest("bitcoin", "get-transaction", params, network),
+    getFeeRate: (params, network) => chainRequest("bitcoin", "get-fee-rate", params ?? {}, network),
+    waitForTransaction: (params, network) => chainRequest("bitcoin", "wait-for-transaction", params, network),
+};
+// ---------------------------------------------------------------------------
+// Default export
+// ---------------------------------------------------------------------------
 /**
  * The bridge client.
  *
- *   import { bridge } from "@w3-io/action-core";
+ *   import { bridge, ethereum, solana, bitcoin } from "@w3-io/action-core";
  *
+ *   // Typed (recommended):
+ *   const receipt = await ethereum.callContract({ contract, method, args });
+ *   const sig = await solana.callProgram({ programId, accounts, data });
+ *   const tx = await bitcoin.send({ to, amount });
+ *
+ *   // Generic:
  *   const bal = await bridge.chain("ethereum", "get-balance", { address });
  *   const hash = await bridge.crypto("keccak-256", { data: "0x..." });
  *   const ok = await bridge.health();
@@ -27915,7 +27911,16 @@ function createMockCore() {
 
 
 
-;// CONCATENATED MODULE: ./src/hyperbolic.js
+
+/***/ }),
+
+/***/ 6971:
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __nccwpck_require__) => {
+
+/* harmony export */ __nccwpck_require__.d(__webpack_exports__, {
+/* harmony export */   F: () => (/* binding */ HyperbolicClient)
+/* harmony export */ });
+/* harmony import */ var _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(4653);
 /**
  * Hyperbolic API client.
  *
@@ -27933,7 +27938,7 @@ const DEFAULT_BASE_URL = 'https://api.hyperbolic.xyz'
 
 class HyperbolicClient {
   constructor({ apiKey, baseUrl = DEFAULT_BASE_URL } = {}) {
-    if (!apiKey) throw new W3ActionError('MISSING_API_KEY', 'API key is required')
+    if (!apiKey) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_API_KEY', 'API key is required')
     this.apiKey = apiKey
     this.baseUrl = baseUrl.replace(/\/+$/, '')
   }
@@ -27958,8 +27963,8 @@ class HyperbolicClient {
    * @returns {object} {content, modelUsed, inputTokens, outputTokens, finishReason, toolCalls}
    */
   async chat({ model, messages, temperature, topP, maxTokens, responseFormat, seed, stop, tools }) {
-    if (!model) throw new W3ActionError('MISSING_MODEL', 'model is required')
-    if (!messages?.length) throw new W3ActionError('MISSING_MESSAGES', 'messages is required')
+    if (!model) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_MODEL', 'model is required')
+    if (!messages?.length) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_MESSAGES', 'messages is required')
 
     const body = {
       model,
@@ -28013,7 +28018,7 @@ class HyperbolicClient {
     lora,
     loraWeight = 0.8,
   }) {
-    if (!prompt) throw new W3ActionError('MISSING_PROMPT', 'prompt is required')
+    if (!prompt) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_PROMPT', 'prompt is required')
 
     const body = {
       model_name: model,
@@ -28052,7 +28057,7 @@ class HyperbolicClient {
    * @returns {object} {audioBase64}
    */
   async generateAudio({ text, language = 'EN', speaker = 'EN-US', speed = 1.0 }) {
-    if (!text) throw new W3ActionError('MISSING_TEXT', 'text is required')
+    if (!text) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_TEXT', 'text is required')
 
     const body = { text, language, speaker_id: speaker, speed }
     const data = await this.post('/v1/audio/generation', body)
@@ -28077,10 +28082,10 @@ class HyperbolicClient {
    * @returns {object} {content, modelUsed, inputTokens, outputTokens}
    */
   async analyzeImage({ model, prompt, imageUrl, imageBase64 }) {
-    if (!model) throw new W3ActionError('MISSING_MODEL', 'model is required')
-    if (!prompt) throw new W3ActionError('MISSING_PROMPT', 'prompt is required')
+    if (!model) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_MODEL', 'model is required')
+    if (!prompt) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_PROMPT', 'prompt is required')
     if (!imageUrl && !imageBase64)
-      throw new W3ActionError('MISSING_IMAGE', 'image-url or image-base64 is required')
+      throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_IMAGE', 'image-url or image-base64 is required')
 
     const imageContent = imageUrl
       ? { type: 'image_url', image_url: { url: imageUrl } }
@@ -28118,7 +28123,7 @@ class HyperbolicClient {
    * @returns {object} {instanceId, sshCommand, status}
    */
   async rentGpu({ gpuType, gpuCount = 1 }) {
-    if (!gpuType) throw new W3ActionError('MISSING_GPU_TYPE', 'gpu-type is required')
+    if (!gpuType) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_GPU_TYPE', 'gpu-type is required')
 
     const data = await this.post('/v1/marketplace/instances', {
       gpu_type: gpuType,
@@ -28139,7 +28144,7 @@ class HyperbolicClient {
    * @returns {object} {status}
    */
   async terminateGpu(instanceId) {
-    if (!instanceId) throw new W3ActionError('MISSING_INSTANCE_ID', 'instance-id is required')
+    if (!instanceId) throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('MISSING_INSTANCE_ID', 'instance-id is required')
 
     const data = await this.request('DELETE', `/v1/marketplace/instances/${instanceId}`)
     return { status: data.status || 'terminated' }
@@ -28159,24 +28164,39 @@ class HyperbolicClient {
 
   async request(method, path, body) {
     const url = `${this.baseUrl}${path}`
-    const { status, body: parsed } = await request(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body,
-    })
-
-    // 204 No Content (typical for DELETE)
-    if (status === 204) return {}
-
-    return parsed
+    try {
+      return await (0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .request */ .Em)(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body,
+      })
+    } catch (err) {
+      // action-core throws W3ActionError with statusCode set and the
+      // response body jammed into the message as `${status}: ${text}`.
+      if (err && typeof err === 'object' && 'statusCode' in err) {
+        throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('HTTP_ERROR', err.message, {
+          statusCode: err.statusCode,
+        })
+      }
+      throw err
+    }
   }
 }
 
-;// CONCATENATED MODULE: ./src/index.js
+
+/***/ }),
+
+/***/ 9722:
+/***/ ((__webpack_module__, __unused_webpack___webpack_exports__, __nccwpck_require__) => {
+
+__nccwpck_require__.a(__webpack_module__, async (__webpack_handle_async_dependencies__, __webpack_async_result__) => { try {
+/* harmony import */ var _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__ = __nccwpck_require__(4653);
+/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_1__ = __nccwpck_require__(7484);
+/* harmony import */ var _hyperbolic_js__WEBPACK_IMPORTED_MODULE_2__ = __nccwpck_require__(6971);
 
 
 
@@ -28188,25 +28208,25 @@ function parseJson(input, name) {
   try {
     return JSON.parse(input)
   } catch {
-    throw new W3ActionError('INVALID_JSON', `Invalid JSON for ${name}`)
+    throw new _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE('INVALID_JSON', `Invalid JSON for ${name}`)
   }
 }
 
 function getClient() {
-  return new HyperbolicClient({
-    apiKey: lib_core.getInput('api-key', { required: true }),
-    baseUrl: lib_core.getInput('api-url') || undefined,
+  return new _hyperbolic_js__WEBPACK_IMPORTED_MODULE_2__/* .HyperbolicClient */ .F({
+    apiKey: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('api-key', { required: true }),
+    baseUrl: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('api-url') || undefined,
   })
 }
 
 // -- Job summary --------------------------------------------------------------
 
-function src_writeSummary(command, result) {
+function writeSummary(command, result) {
   const heading = `Hyperbolic: ${command}`
 
   if (command === 'chat') {
     const preview = result.content?.slice(0, 200) || ''
-    lib_core.summary
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary
       .addHeading(heading, 3)
       .addRaw(`**Model:** \`${result.modelUsed}\`\n\n`)
       .addRaw(
@@ -28218,7 +28238,7 @@ function src_writeSummary(command, result) {
   }
 
   if (command === 'generate-image') {
-    lib_core.summary
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary
       .addHeading(heading, 3)
       .addRaw(`**Model:** \`${result.model}\`\n\n`)
       .addRaw(`Image generated (${result.imageBase64 ? 'base64 in result' : 'no data'})\n`)
@@ -28227,7 +28247,7 @@ function src_writeSummary(command, result) {
   }
 
   if (command === 'generate-audio') {
-    lib_core.summary
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary
       .addHeading(heading, 3)
       .addRaw(`Audio generated (${result.audioBase64 ? 'base64 in result' : 'no data'})\n`)
       .write()
@@ -28235,7 +28255,7 @@ function src_writeSummary(command, result) {
   }
 
   if (command === 'rent-gpu') {
-    lib_core.summary
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary
       .addHeading(heading, 3)
       .addRaw(`**Instance:** \`${result.instanceId}\`\n\n`)
       .addRaw(`**Status:** ${result.status}\n`)
@@ -28244,7 +28264,7 @@ function src_writeSummary(command, result) {
   }
 
   // Default summary
-  lib_core.summary
+  _actions_core__WEBPACK_IMPORTED_MODULE_1__.summary
     .addHeading(heading, 3)
     .addCodeBlock(JSON.stringify(result, null, 2), 'json')
     .write()
@@ -28255,96 +28275,281 @@ function src_writeSummary(command, result) {
 async function runAndSummarize(command, handler) {
   const client = getClient()
   const result = await handler(client)
-  src_writeSummary(command, result)
+  writeSummary(command, result)
   return result
 }
 
-const router = createCommandRouter({
+const router = (0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .createCommandRouter */ .X4)({
   chat: async () => {
     const result = await runAndSummarize('chat', async (client) => {
-      const messages = parseJson(lib_core.getInput('messages', { required: true }), 'messages')
-      const stop = lib_core.getInput('stop')
+      const messages = parseJson(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('messages', { required: true }), 'messages')
+      const stop = _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('stop')
 
       return client.chat({
-        model: lib_core.getInput('model', { required: true }),
+        model: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('model', { required: true }),
         messages,
-        temperature: lib_core.getInput('temperature')
-          ? Number(lib_core.getInput('temperature'))
+        temperature: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('temperature')
+          ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('temperature'))
           : undefined,
-        topP: lib_core.getInput('top-p') ? Number(lib_core.getInput('top-p')) : undefined,
-        maxTokens: lib_core.getInput('max-tokens') ? Number(lib_core.getInput('max-tokens')) : undefined,
-        responseFormat: parseJson(lib_core.getInput('response-format'), 'response-format'),
-        seed: lib_core.getInput('seed') ? Number(lib_core.getInput('seed')) : undefined,
+        topP: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('top-p') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('top-p')) : undefined,
+        maxTokens: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('max-tokens') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('max-tokens')) : undefined,
+        responseFormat: parseJson(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('response-format'), 'response-format'),
+        seed: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('seed') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('seed')) : undefined,
         stop: stop ? stop.split(',').map((s) => s.trim()) : undefined,
-        tools: parseJson(lib_core.getInput('tools'), 'tools'),
+        tools: parseJson(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('tools'), 'tools'),
       })
     })
-    setJsonOutput('result', result)
+    ;(0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .setJsonOutput */ .mI)('result', result)
   },
 
   'generate-image': async () => {
     const result = await runAndSummarize('generate-image', async (client) => {
       return client.generateImage({
-        model: lib_core.getInput('model') || undefined,
-        prompt: lib_core.getInput('prompt', { required: true }),
-        height: lib_core.getInput('height') ? Number(lib_core.getInput('height')) : undefined,
-        width: lib_core.getInput('width') ? Number(lib_core.getInput('width')) : undefined,
-        steps: lib_core.getInput('steps') ? Number(lib_core.getInput('steps')) : undefined,
-        lora: lib_core.getInput('lora') || undefined,
-        loraWeight: lib_core.getInput('lora-weight') ? Number(lib_core.getInput('lora-weight')) : undefined,
+        model: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('model') || undefined,
+        prompt: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('prompt', { required: true }),
+        height: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('height') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('height')) : undefined,
+        width: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('width') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('width')) : undefined,
+        steps: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('steps') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('steps')) : undefined,
+        lora: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('lora') || undefined,
+        loraWeight: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('lora-weight') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('lora-weight')) : undefined,
       })
     })
-    setJsonOutput('result', result)
+    ;(0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .setJsonOutput */ .mI)('result', result)
   },
 
   'generate-audio': async () => {
     const result = await runAndSummarize('generate-audio', async (client) => {
       return client.generateAudio({
-        text: lib_core.getInput('text', { required: true }),
-        language: lib_core.getInput('language') || undefined,
-        speaker: lib_core.getInput('speaker') || undefined,
-        speed: lib_core.getInput('speed') ? Number(lib_core.getInput('speed')) : undefined,
+        text: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('text', { required: true }),
+        language: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('language') || undefined,
+        speaker: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('speaker') || undefined,
+        speed: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('speed') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('speed')) : undefined,
       })
     })
-    setJsonOutput('result', result)
+    ;(0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .setJsonOutput */ .mI)('result', result)
   },
 
   'analyze-image': async () => {
     const result = await runAndSummarize('analyze-image', async (client) => {
       return client.analyzeImage({
-        model: lib_core.getInput('model', { required: true }),
-        prompt: lib_core.getInput('prompt', { required: true }),
-        imageUrl: lib_core.getInput('image-url') || undefined,
-        imageBase64: lib_core.getInput('image-base64') || undefined,
+        model: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('model', { required: true }),
+        prompt: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('prompt', { required: true }),
+        imageUrl: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('image-url') || undefined,
+        imageBase64: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('image-base64') || undefined,
       })
     })
-    setJsonOutput('result', result)
+    ;(0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .setJsonOutput */ .mI)('result', result)
   },
 
   'list-gpus': async () => {
     const result = await runAndSummarize('list-gpus', async (client) => {
       return client.listGpus()
     })
-    setJsonOutput('result', result)
+    ;(0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .setJsonOutput */ .mI)('result', result)
   },
 
   'rent-gpu': async () => {
     const result = await runAndSummarize('rent-gpu', async (client) => {
       return client.rentGpu({
-        gpuType: lib_core.getInput('gpu-type', { required: true }),
-        gpuCount: lib_core.getInput('gpu-count') ? Number(lib_core.getInput('gpu-count')) : undefined,
+        gpuType: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('gpu-type', { required: true }),
+        gpuCount: _actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('gpu-count') ? Number(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('gpu-count')) : undefined,
       })
     })
-    setJsonOutput('result', result)
+    ;(0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .setJsonOutput */ .mI)('result', result)
   },
 
   'terminate-gpu': async () => {
     const result = await runAndSummarize('terminate-gpu', async (client) => {
-      return client.terminateGpu(lib_core.getInput('instance-id', { required: true }))
+      return client.terminateGpu(_actions_core__WEBPACK_IMPORTED_MODULE_1__.getInput('instance-id', { required: true }))
     })
-    setJsonOutput('result', result)
+    ;(0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .setJsonOutput */ .mI)('result', result)
   },
 })
 
-router()
+try {
+  await router()
+} catch (err) {
+  if (err instanceof _w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .W3ActionError */ .FE) {
+    _actions_core__WEBPACK_IMPORTED_MODULE_1__.setFailed(`[${err.code}] ${err.message}`)
+  } else {
+    (0,_w3_io_action_core__WEBPACK_IMPORTED_MODULE_0__/* .handleError */ .H4)(err)
+  }
+}
 
+__webpack_async_result__();
+} catch(e) { __webpack_async_result__(e); } }, 1);
+
+/***/ })
+
+/******/ });
+/************************************************************************/
+/******/ // The module cache
+/******/ var __webpack_module_cache__ = {};
+/******/ 
+/******/ // The require function
+/******/ function __nccwpck_require__(moduleId) {
+/******/ 	// Check if module is in cache
+/******/ 	var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 	if (cachedModule !== undefined) {
+/******/ 		return cachedModule.exports;
+/******/ 	}
+/******/ 	// Create a new module (and put it into the cache)
+/******/ 	var module = __webpack_module_cache__[moduleId] = {
+/******/ 		// no module.id needed
+/******/ 		// no module.loaded needed
+/******/ 		exports: {}
+/******/ 	};
+/******/ 
+/******/ 	// Execute the module function
+/******/ 	var threw = true;
+/******/ 	try {
+/******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __nccwpck_require__);
+/******/ 		threw = false;
+/******/ 	} finally {
+/******/ 		if(threw) delete __webpack_module_cache__[moduleId];
+/******/ 	}
+/******/ 
+/******/ 	// Return the exports of the module
+/******/ 	return module.exports;
+/******/ }
+/******/ 
+/************************************************************************/
+/******/ /* webpack/runtime/async module */
+/******/ (() => {
+/******/ 	var webpackQueues = typeof Symbol === "function" ? Symbol("webpack queues") : "__webpack_queues__";
+/******/ 	var webpackExports = typeof Symbol === "function" ? Symbol("webpack exports") : "__webpack_exports__";
+/******/ 	var webpackError = typeof Symbol === "function" ? Symbol("webpack error") : "__webpack_error__";
+/******/ 	var resolveQueue = (queue) => {
+/******/ 		if(queue && queue.d < 1) {
+/******/ 			queue.d = 1;
+/******/ 			queue.forEach((fn) => (fn.r--));
+/******/ 			queue.forEach((fn) => (fn.r-- ? fn.r++ : fn()));
+/******/ 		}
+/******/ 	}
+/******/ 	var wrapDeps = (deps) => (deps.map((dep) => {
+/******/ 		if(dep !== null && typeof dep === "object") {
+/******/ 			if(dep[webpackQueues]) return dep;
+/******/ 			if(dep.then) {
+/******/ 				var queue = [];
+/******/ 				queue.d = 0;
+/******/ 				dep.then((r) => {
+/******/ 					obj[webpackExports] = r;
+/******/ 					resolveQueue(queue);
+/******/ 				}, (e) => {
+/******/ 					obj[webpackError] = e;
+/******/ 					resolveQueue(queue);
+/******/ 				});
+/******/ 				var obj = {};
+/******/ 				obj[webpackQueues] = (fn) => (fn(queue));
+/******/ 				return obj;
+/******/ 			}
+/******/ 		}
+/******/ 		var ret = {};
+/******/ 		ret[webpackQueues] = x => {};
+/******/ 		ret[webpackExports] = dep;
+/******/ 		return ret;
+/******/ 	}));
+/******/ 	__nccwpck_require__.a = (module, body, hasAwait) => {
+/******/ 		var queue;
+/******/ 		hasAwait && ((queue = []).d = -1);
+/******/ 		var depQueues = new Set();
+/******/ 		var exports = module.exports;
+/******/ 		var currentDeps;
+/******/ 		var outerResolve;
+/******/ 		var reject;
+/******/ 		var promise = new Promise((resolve, rej) => {
+/******/ 			reject = rej;
+/******/ 			outerResolve = resolve;
+/******/ 		});
+/******/ 		promise[webpackExports] = exports;
+/******/ 		promise[webpackQueues] = (fn) => (queue && fn(queue), depQueues.forEach(fn), promise["catch"](x => {}));
+/******/ 		module.exports = promise;
+/******/ 		body((deps) => {
+/******/ 			currentDeps = wrapDeps(deps);
+/******/ 			var fn;
+/******/ 			var getResult = () => (currentDeps.map((d) => {
+/******/ 				if(d[webpackError]) throw d[webpackError];
+/******/ 				return d[webpackExports];
+/******/ 			}))
+/******/ 			var promise = new Promise((resolve) => {
+/******/ 				fn = () => (resolve(getResult));
+/******/ 				fn.r = 0;
+/******/ 				var fnQueue = (q) => (q !== queue && !depQueues.has(q) && (depQueues.add(q), q && !q.d && (fn.r++, q.push(fn))));
+/******/ 				currentDeps.map((dep) => (dep[webpackQueues](fnQueue)));
+/******/ 			});
+/******/ 			return fn.r ? promise : getResult();
+/******/ 		}, (err) => ((err ? reject(promise[webpackError] = err) : outerResolve(exports)), resolveQueue(queue)));
+/******/ 		queue && queue.d < 0 && (queue.d = 0);
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/create fake namespace object */
+/******/ (() => {
+/******/ 	var getProto = Object.getPrototypeOf ? (obj) => (Object.getPrototypeOf(obj)) : (obj) => (obj.__proto__);
+/******/ 	var leafPrototypes;
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 16: return value when it's Promise-like
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__nccwpck_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = this(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if(typeof value === 'object' && value) {
+/******/ 			if((mode & 4) && value.__esModule) return value;
+/******/ 			if((mode & 16) && typeof value.then === 'function') return value;
+/******/ 		}
+/******/ 		var ns = Object.create(null);
+/******/ 		__nccwpck_require__.r(ns);
+/******/ 		var def = {};
+/******/ 		leafPrototypes = leafPrototypes || [null, getProto({}), getProto([]), getProto(getProto)];
+/******/ 		for(var current = mode & 2 && value; typeof current == 'object' && !~leafPrototypes.indexOf(current); current = getProto(current)) {
+/******/ 			Object.getOwnPropertyNames(current).forEach((key) => (def[key] = () => (value[key])));
+/******/ 		}
+/******/ 		def['default'] = () => (value);
+/******/ 		__nccwpck_require__.d(ns, def);
+/******/ 		return ns;
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/define property getters */
+/******/ (() => {
+/******/ 	// define getter functions for harmony exports
+/******/ 	__nccwpck_require__.d = (exports, definition) => {
+/******/ 		for(var key in definition) {
+/******/ 			if(__nccwpck_require__.o(definition, key) && !__nccwpck_require__.o(exports, key)) {
+/******/ 				Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 			}
+/******/ 		}
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/hasOwnProperty shorthand */
+/******/ (() => {
+/******/ 	__nccwpck_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/make namespace object */
+/******/ (() => {
+/******/ 	// define __esModule on exports
+/******/ 	__nccwpck_require__.r = (exports) => {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/ })();
+/******/ 
+/******/ /* webpack/runtime/compat */
+/******/ 
+/******/ if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = new URL('.', import.meta.url).pathname.slice(import.meta.url.match(/^file:\/\/\/\w:/) ? 1 : 0, -1) + "/";
+/******/ 
+/************************************************************************/
+/******/ 
+/******/ // startup
+/******/ // Load entry module and return exports
+/******/ // This entry module used 'module' so it can't be inlined
+/******/ var __webpack_exports__ = __nccwpck_require__(9722);
+/******/ __webpack_exports__ = await __webpack_exports__;
+/******/ 
