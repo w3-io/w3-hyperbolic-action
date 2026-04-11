@@ -241,19 +241,25 @@ export class HyperbolicClient {
 
   async request(method, path, body) {
     const url = `${this.baseUrl}${path}`
-    const { status, body: parsed } = await coreRequest(url, {
-      method,
-      headers: {
-        Authorization: `Bearer ${this.apiKey}`,
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-      },
-      body,
-    })
-
-    // 204 No Content (typical for DELETE)
-    if (status === 204) return {}
-
-    return parsed
+    try {
+      return await coreRequest(url, {
+        method,
+        headers: {
+          Authorization: `Bearer ${this.apiKey}`,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body,
+      })
+    } catch (err) {
+      // action-core throws W3ActionError with statusCode set and the
+      // response body jammed into the message as `${status}: ${text}`.
+      if (err && typeof err === 'object' && 'statusCode' in err) {
+        throw new W3ActionError('HTTP_ERROR', err.message, {
+          statusCode: err.statusCode,
+        })
+      }
+      throw err
+    }
   }
 }
