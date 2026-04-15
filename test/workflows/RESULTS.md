@@ -1,30 +1,35 @@
 # E2E Test Results
 
-Last verified: 2026-04-15
-
-## Environment
-
-- W3 local network (3-node localnet)
-- Protocol: master (includes EIP-712, bridge-allow expansion, nonce manager)
-- Runner image: w3io/w3-runner (Node 20/24)
+> Last verified: 2026-04-15
 
 ## Prerequisites
 
-- W3 local network running (make dev)
-- W3_SECRET_HYPERBOLIC_API_KEY set to a Hyperbolic API key
+| Credential | Env var | Source |
+|-----------|---------|--------|
+| Hyperbolic API key | `HYPERBOLIC_API_KEY` | Hyperbolic dashboard |
 
 ## Results
 
-| Step | Command | Status | Notes |
-|------|---------|--------|-------|
-| 1 | chat | PASS | meta-llama/Llama-3.3-70B-Instruct, max-tokens 50 |
+| # | Step | Command | Status | Notes |
+|---|------|---------|--------|-------|
+| 1 | Chat completion | `chat` | PASS | model: Llama-3.3-70B-Instruct |
 
-## Known Limitations
+## Skipped Commands
 
-- generate-image: commented out, SDXL1.0-base no longer publicly
-  available on Hyperbolic.
-- generate-audio: commented out, requires specific model access.
-- analyze-image: commented out, requires specific model access.
-- list-gpus: commented out, returns 405 Method Not Allowed (endpoint
-  may have changed or require different authentication).
-- rent-gpu / terminate-gpu: not tested, incurs real costs.
+| Command | Reason |
+|---------|--------|
+| `generate-image` | SDXL1.0-base no longer publicly available |
+| `generate-audio` | Requires specific model access |
+| `analyze-image` | Requires specific model access |
+| `list-gpus` | Returns 405; endpoint may have changed |
+| `rent-gpu` / `terminate-gpu` | Incurs real costs |
+
+## How to run
+
+```bash
+# Export credentials
+export HYPERBOLIC_API_KEY="..."
+
+# Run
+w3 workflow test --execute test/workflows/e2e.yaml
+```
