@@ -30,37 +30,38 @@ jobs:
           temperature: "0.1"
 
       # ── Image Generation ───────────────────────────────────────────────────
-
-      - name: Generate an image
-        uses: w3-io/w3-hyperbolic-action@v0
-        with:
-          command: generate-image
-          api-key: ${{ secrets.HYPERBOLIC_API_KEY }}
-          prompt: A simple blue square on a white background
-          height: "512"
-          width: "512"
-          steps: "10"
+      # NOTE: Commented out — requires specific model access (SDXL1.0-base
+      # is no longer publicly available on Hyperbolic).
+      # - name: Generate an image
+      #   uses: w3-io/w3-hyperbolic-action@v0
+      #   with:
+      #     command: generate-image
+      #     api-key: ${{ secrets.HYPERBOLIC_API_KEY }}
+      #     prompt: A simple blue square on a white background
+      #     height: "512"
+      #     width: "512"
+      #     steps: "10"
 
       # ── Audio Generation ───────────────────────────────────────────────────
-
-      - name: Generate audio from text
-        uses: w3-io/w3-hyperbolic-action@v0
-        with:
-          command: generate-audio
-          api-key: ${{ secrets.HYPERBOLIC_API_KEY }}
-          text: This is an end to end test of the Hyperbolic text to speech API.
-          language: EN
-          speaker: EN-US
+      # NOTE: Commented out — requires specific model access.
+      # - name: Generate audio from text
+      #   uses: w3-io/w3-hyperbolic-action@v0
+      #   with:
+      #     command: generate-audio
+      #     api-key: ${{ secrets.HYPERBOLIC_API_KEY }}
+      #     text: This is an end to end test of the Hyperbolic text to speech API.
+      #     language: EN
+      #     speaker: EN-US
 
       # ── Vision ─────────────────────────────────────────────────────────────
-
-      - name: Analyze an image
-        uses: w3-io/w3-hyperbolic-action@v0
-        with:
-          command: analyze-image
-          api-key: ${{ secrets.HYPERBOLIC_API_KEY }}
-          image-url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png
-          prompt: What colors are in this image?
+      # NOTE: Commented out — requires specific model access.
+      # - name: Analyze an image
+      #   uses: w3-io/w3-hyperbolic-action@v0
+      #   with:
+      #     command: analyze-image
+      #     api-key: ${{ secrets.HYPERBOLIC_API_KEY }}
+      #     image-url: https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png
+      #     prompt: What colors are in this image?
 
       # ── GPU Compute ────────────────────────────────────────────────────────
 
