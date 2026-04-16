@@ -4,25 +4,25 @@
 
 ## Prerequisites
 
-| Credential | Env var | Source |
-|-----------|---------|--------|
+| Credential         | Env var              | Source               |
+| ------------------ | -------------------- | -------------------- |
 | Hyperbolic API key | `HYPERBOLIC_API_KEY` | Hyperbolic dashboard |
 
 ## Results
 
-| # | Step | Command | Status | Notes |
-|---|------|---------|--------|-------|
-| 1 | Chat completion | `chat` | PASS | model: Llama-3.3-70B-Instruct |
+| #   | Step            | Command | Status | Notes                         |
+| --- | --------------- | ------- | ------ | ----------------------------- |
+| 1   | Chat completion | `chat`  | PASS   | model: Llama-3.3-70B-Instruct |
 
 ## Skipped Commands
 
-| Command | Reason |
-|---------|--------|
-| `generate-image` | SDXL1.0-base no longer publicly available |
-| `generate-audio` | Requires specific model access |
-| `analyze-image` | Requires specific model access |
-| `list-gpus` | Returns 405; endpoint may have changed |
-| `rent-gpu` / `terminate-gpu` | Incurs real costs |
+| Command                      | Reason                                    |
+| ---------------------------- | ----------------------------------------- |
+| `generate-image`             | SDXL1.0-base no longer publicly available |
+| `generate-audio`             | Requires specific model access            |
+| `analyze-image`              | Requires specific model access            |
+| `list-gpus`                  | Returns 405; endpoint may have changed    |
+| `rent-gpu` / `terminate-gpu` | Incurs real costs                         |
 
 ## How to run
 

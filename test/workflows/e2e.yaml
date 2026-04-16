@@ -26,8 +26,8 @@ jobs:
           api-key: ${{ secrets.HYPERBOLIC_API_KEY }}
           model: meta-llama/Llama-3.3-70B-Instruct
           messages: '[{"role":"user","content":"Say hello in exactly three words."}]'
-          max-tokens: "50"
-          temperature: "0.1"
+          max-tokens: '50'
+          temperature: '0.1'
 
       # ── Image Generation ───────────────────────────────────────────────────
       # NOTE: Commented out — requires specific model access (SDXL1.0-base
