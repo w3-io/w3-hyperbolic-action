@@ -3,6 +3,15 @@ partner: hyperbolic
 name: Hyperbolic AI Inference
 version: 1.0.0
 repo: w3-io/w3-hyperbolic-action
+description: >
+  Decentralized AI inference via Hyperbolic's open-access GPU cloud.
+  Text chat completions using DeepSeek, Llama, and Qwen models.
+  OpenAI-compatible API.
+context: >
+  Use Hyperbolic for text inference when decentralization matters.
+  Currently limited to 5 text models — no image, audio, or vision.
+  For multimodal inference, use Venice instead. Free tier (60 RPM),
+  Pro tier ($5 deposit, 600 RPM). Requires HYPERBOLIC_API_KEY.
 commands:
   - name: chat
     description: >
